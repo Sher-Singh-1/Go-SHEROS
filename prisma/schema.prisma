@@ -1,0 +1,388 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────── Identity ─────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  totpSecret   String?
+  totpEnabled  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile       Profile?
+  preferences   UserPreferences?
+  goals         Goal[]
+  tasks         Task[]
+  habits        Habit[]
+  taskSessions  TaskSession[]
+  streak        Streak?
+  achievements  Achievement[]
+  conversations AIConversation[]
+  reminderRules ReminderRule[]
+  notifications Notification[]
+  backupCodes   BackupCode[]
+
+  @@map("users")
+}
+
+model BackupCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("backup_codes")
+}
+
+model Profile {
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  displayName String?
+  profession  Profession?
+  onboardedAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+enum Profession {
+  STUDENT
+  CORPORATE_EMPLOYEE
+  BUSINESS_OWNER
+  FREELANCER
+  ENTREPRENEUR
+  DEVELOPER
+  MANAGER
+  TEACHER
+  OTHER
+}
+
+model UserPreferences {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  hoursPerDay         Float    @default(2)
+  preferredStartHour  Int      @default(9)
+  preferredEndHour    Int      @default(21)
+  dailyCommitmentRule String   @default("AT_LEAST_ONE_TASK")
+  theme               String   @default("system")
+  reducedMotion       Boolean  @default(false)
+  quietHoursStart     Int?
+  quietHoursEnd       Int?
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+// ───────────────────────── Goals & Tasks ─────────────────────────
+
+model Goal {
+  id              String     @id @default(cuid())
+  userId          String
+  title           String
+  description     String?
+  startDate       DateTime
+  endDate         DateTime
+  priority        Priority   @default(MEDIUM)
+  status          GoalStatus @default(ACTIVE)
+  experienceLevel String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestones    Milestone[]
+  tasks         Task[]
+  aiPlans       AIGeneratedPlan[]
+  conversations AIConversation[]
+
+  @@index([userId, status])
+  @@map("goals")
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  goalId      String
+  title       String
+  targetDate  DateTime
+  order       Int
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  goal  Goal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@index([goalId])
+  @@map("milestones")
+}
+
+model Task {
+  id               String     @id @default(cuid())
+  userId           String
+  goalId           String?
+  milestoneId      String?
+  title            String
+  description      String?
+  date             DateTime
+  startTime        String?
+  dueTime          String?
+  priority         Priority   @default(MEDIUM)
+  category         String?
+  status           TaskStatus @default(NOT_STARTED)
+  estimatedMinutes Int?
+  recurrenceRule   String?
+  notes            String?
+  tags             String[]   @default([])
+  order            Int        @default(0)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal      Goal?         @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  milestone Milestone?    @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  subtasks  Subtask[]
+  sessions  TaskSession[]
+
+  @@index([userId, date])
+  @@index([goalId])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+  OVERDUE
+}
+
+model Subtask {
+  id        String  @id @default(cuid())
+  taskId    String
+  title     String
+  completed Boolean @default(false)
+  order     Int     @default(0)
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@map("subtasks")
+}
+
+// ───────────────────────── Habits ─────────────────────────
+
+model Habit {
+  id         String   @id @default(cuid())
+  userId     String
+  title      String
+  cadence    String   @default("DAILY")
+  targetDays Int[]    @default([0, 1, 2, 3, 4, 5, 6])
+  archived   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs HabitLog[]
+
+  @@index([userId])
+  @@map("habits")
+}
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  date      DateTime
+  completed Boolean  @default(true)
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+  @@map("habit_logs")
+}
+
+// ───────────────────────── Focus Timer ─────────────────────────
+
+model TaskSession {
+  id             String        @id @default(cuid())
+  taskId         String
+  userId         String
+  mode           SessionMode   @default(STOPWATCH)
+  startedAt      DateTime      @default(now())
+  endedAt        DateTime?
+  plannedSeconds Int?
+  actualSeconds  Int?
+  status         SessionStatus @default(RUNNING)
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startedAt])
+  @@index([taskId])
+  @@map("task_sessions")
+}
+
+enum SessionMode {
+  STOPWATCH
+  COUNTDOWN
+  POMODORO
+}
+
+enum SessionStatus {
+  RUNNING
+  PAUSED
+  COMPLETED
+  ABANDONED
+}
+
+// ───────────────────────── Consistency ─────────────────────────
+
+model Streak {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  currentCount   Int       @default(0)
+  longestCount   Int       @default(0)
+  lastActiveDate DateTime?
+  recoveryUsedAt DateTime?
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("streaks")
+}
+
+model Achievement {
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  unlockedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@map("achievements")
+}
+
+// ───────────────────────── AI ─────────────────────────
+
+model AIConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  goalId    String?
+  title     String?
+  createdAt DateTime @default(now())
+
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal     Goal?       @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  messages AIMessage[]
+
+  @@index([userId])
+  @@map("ai_conversations")
+}
+
+model AIMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           String
+  content        String
+  createdAt      DateTime @default(now())
+
+  conversation AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("ai_messages")
+}
+
+model AIGeneratedPlan {
+  id            String     @id @default(cuid())
+  goalId        String
+  proposedJson  Json
+  status        PlanStatus @default(DRAFT)
+  sourceMessage String?
+  createdAt     DateTime   @default(now())
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+  @@map("ai_generated_plans")
+}
+
+enum PlanStatus {
+  DRAFT
+  ACCEPTED
+  REJECTED
+}
+
+// ───────────────────────── Notifications ─────────────────────────
+
+model ReminderRule {
+  id            String              @id @default(cuid())
+  userId        String
+  type          ReminderType
+  targetId      String?
+  timeOfDay     String?
+  offsetMinutes Int?
+  condition     String?
+  channel       NotificationChannel @default(IN_APP)
+  enabled       Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("reminder_rules")
+}
+
+enum ReminderType {
+  TASK_DUE
+  DAILY_PLANNING
+  EVENING_REVIEW
+  MISSED_TASK
+  GOAL_MILESTONE
+  STREAK_RISK
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  PUSH
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}
