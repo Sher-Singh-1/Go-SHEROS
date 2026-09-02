@@ -6,6 +6,8 @@ import { format } from "date-fns";
 import { updateTask } from "@/app/dashboard/tasks/actions";
 import { Field, TextInput, FormError } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
+import { LinkListEditor } from "./link-list-editor";
+import { parseResourceLinks } from "@/lib/tasks/resource-links";
 import type { TaskRowData } from "./task-row";
 
 export function TaskEditModal({ task, onClose }: { task: TaskRowData; onClose: () => void }) {
@@ -64,6 +66,10 @@ export function TaskEditModal({ task, onClose }: { task: TaskRowData; onClose: (
           <Field label="Category" htmlFor="edit-category">
             <TextInput id="edit-category" name="category" defaultValue={task.category ?? ""} maxLength={60} />
           </Field>
+          <LinkListEditor
+            initialLinks={parseResourceLinks(task.notes)
+              .filter((l): l is { name: string; url: string } => Boolean(l.url))}
+          />
           <FormError message={error} />
           <div className="flex gap-3">
             <Button type="submit" disabled={pending}>{pending ? "Saving…" : "Save changes"}</Button>

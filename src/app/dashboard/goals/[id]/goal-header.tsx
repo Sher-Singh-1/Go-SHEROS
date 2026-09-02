@@ -6,12 +6,16 @@ import { format } from "date-fns";
 import { updateGoal, archiveGoal, reactivateGoal, deleteGoal, type EditGoalState } from "../actions";
 import { Field, TextInput, FormError } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
+import { LinkListEditor } from "@/components/tasks/link-list-editor";
+import { ResourceLinkChips } from "@/components/tasks/resource-link-chips";
+import { parseResourceLinks } from "@/lib/tasks/resource-links";
 import type { GoalStatus, Priority } from "@prisma/client";
 
 export type EditableGoal = {
   id: string;
   title: string;
   description: string | null;
+  notes: string | null;
   startDate: string;
   endDate: string;
   priority: Priority;
@@ -60,6 +64,9 @@ export function GoalHeader({ goal }: { goal: EditableGoal }) {
             </select>
           </Field>
         </div>
+        <LinkListEditor
+          initialLinks={parseResourceLinks(goal.notes).filter((l): l is { name: string; url: string } => Boolean(l.url))}
+        />
         <FormError message={state?.error} />
         <div className="flex gap-3">
           <Button type="submit" disabled={submitting}>{submitting ? "Saving…" : "Save changes"}</Button>
@@ -77,6 +84,7 @@ export function GoalHeader({ goal }: { goal: EditableGoal }) {
         </p>
         <h1 className="mt-1 text-2xl font-semibold">{goal.title}</h1>
         {goal.description && <p className="mt-1.5 max-w-xl text-sm text-ink-soft">{goal.description}</p>}
+        {goal.notes && <div className="mt-2"><ResourceLinkChips links={parseResourceLinks(goal.notes)} /></div>}
       </div>
       <div className="flex flex-none items-center gap-4">
         <button onClick={() => setEditing(true)} className="text-xs font-medium text-ink-faint hover:text-ink">

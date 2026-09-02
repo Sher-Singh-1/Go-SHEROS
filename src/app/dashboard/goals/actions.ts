@@ -159,6 +159,7 @@ export async function updateGoal(goalId: string, _prev: EditGoalState, formData:
   const parsed = manualGoalSchema.safeParse({
     title: formData.get("title"),
     description: formData.get("description") || undefined,
+    notes: formData.get("notes") || undefined,
     startDate: formData.get("startDate"),
     endDate: formData.get("endDate"),
     priority: formData.get("priority") || "MEDIUM",
@@ -168,7 +169,10 @@ export async function updateGoal(goalId: string, _prev: EditGoalState, formData:
 
   if (data.endDate <= data.startDate) return { error: "End date needs to be after the start date." };
 
-  const result = await prisma.goal.updateMany({ where: { id: goalId, userId: user.id }, data });
+  const result = await prisma.goal.updateMany({
+    where: { id: goalId, userId: user.id },
+    data: { ...data, description: data.description ?? null, notes: data.notes ?? null },
+  });
   if (result.count === 0) return { error: "Couldn't find that goal." };
 
   revalidatePath(`/dashboard/goals/${goalId}`);

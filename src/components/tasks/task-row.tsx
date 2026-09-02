@@ -7,6 +7,8 @@ import { isBefore, startOfDay } from "date-fns";
 import { setTaskStatus, deleteTask } from "@/app/dashboard/tasks/actions";
 import { TaskEditModal } from "./task-edit-modal";
 import { celebrate } from "@/lib/celebration";
+import { parseResourceLinks } from "@/lib/tasks/resource-links";
+import { ResourceLinkChips } from "./resource-link-chips";
 import type { Priority, TaskStatus } from "@prisma/client";
 
 export type TaskRowData = {
@@ -18,6 +20,8 @@ export type TaskRowData = {
   startTime: string | null;
   category: string | null;
   estimatedMinutes: number | null;
+  description?: string | null;
+  notes?: string | null;
 };
 
 const PRIORITY_DOT: Record<Priority, string> = {
@@ -29,10 +33,13 @@ const PRIORITY_DOT: Record<Priority, string> = {
 export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDelete?: boolean }) {
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const router = useRouter();
 
   const isCompleted = task.status === "COMPLETED";
   const isOverdue = !isCompleted && task.status !== "SKIPPED" && isBefore(startOfDay(task.date), startOfDay(new Date()));
+  const resourceLinks = parseResourceLinks(task.notes);
+  const hasDetails = Boolean(task.description) || resourceLinks.length > 0;
 
   function toggle(e: React.MouseEvent<HTMLButtonElement>) {
     const willComplete = !isCompleted;
@@ -49,10 +56,11 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
   return (
     <div
       className={clsx(
-        "group flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 transition-opacity",
+        "group rounded-xl border border-border bg-surface px-4 py-3 transition-opacity",
         pending && "opacity-60"
       )}
     >
+      <div className="flex items-center gap-3">
       <button
         onClick={toggle}
         aria-pressed={isCompleted}
@@ -71,15 +79,20 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
 
       <span className={clsx("h-1.5 w-1.5 flex-none rounded-full", PRIORITY_DOT[task.priority])} />
 
-      <div className="min-w-0 flex-1">
+      <button
+        type="button"
+        onClick={() => hasDetails && setExpanded((v) => !v)}
+        className={clsx("min-w-0 flex-1 text-left", hasDetails && "cursor-pointer")}
+      >
         <p className={clsx("truncate text-sm font-medium", isCompleted && "text-ink-faint line-through")}>{task.title}</p>
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-faint">
           {task.startTime && <span className="font-mono">{task.startTime}</span>}
           {task.estimatedMinutes && <span>{task.estimatedMinutes}m</span>}
           {task.category && <span>{task.category}</span>}
           {isOverdue && <span className="font-medium text-danger">Overdue</span>}
+          {hasDetails && <span className="font-medium text-teal">{expanded ? "Hide details" : "Details"}</span>}
         </div>
-      </div>
+      </button>
 
       <button
         onClick={() => setEditing(true)}
@@ -101,6 +114,17 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
           </svg>
         </button>
+      )}
+
+      </div>
+
+      {expanded && hasDetails && (
+        <div className="ml-8 mt-3 flex flex-col gap-2.5 border-t border-border pt-3">
+          {task.description && (
+            <p className="whitespace-pre-line text-xs text-ink-soft">{task.description}</p>
+          )}
+          <ResourceLinkChips links={resourceLinks} />
+        </div>
       )}
 
       {editing && <TaskEditModal task={task} onClose={() => setEditing(false)} />}

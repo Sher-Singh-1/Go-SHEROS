@@ -31,6 +31,7 @@ export default async function GoalDetailPage({ params }: { params: Promise<{ id:
           id: goal.id,
           title: goal.title,
           description: goal.description,
+          notes: goal.notes,
           startDate: goal.startDate.toISOString(),
           endDate: goal.endDate.toISOString(),
           priority: goal.priority,
