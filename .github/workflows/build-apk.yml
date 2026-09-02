@@ -1,0 +1,125 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "public/manifest.json"
+      - ".github/workflows/build-apk.yml"
+
+permissions:
+  contents: write
+
+env:
+  APP_URL: https://go-sheros.vercel.app
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: Generate signing keystore
+        run: |
+          mkdir -p twa-build
+          cd twa-build
+          KEYSTORE_PASSWORD=$(openssl rand -hex 16)
+          echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+          keytool -genkeypair -v \
+            -keystore android.keystore \
+            -alias gosheros \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "$KEYSTORE_PASSWORD" -keypass "$KEYSTORE_PASSWORD" \
+            -dname "CN=Go Sheros, OU=Personal, O=Go Sheros, L=NA, S=NA, C=US"
+
+      - name: Write twa-manifest.json
+        working-directory: twa-build
+        run: |
+          cat > twa-manifest.json <<EOF
+          {
+            "packageId": "com.gosheros.app",
+            "host": "go-sheros.vercel.app",
+            "name": "Go Sheros",
+            "launcherName": "Go Sheros",
+            "display": "standalone",
+            "themeColor": "#2f7a63",
+            "themeColorDark": "#0e1613",
+            "navigationColor": "#2f7a63",
+            "navigationColorDark": "#0e1613",
+            "backgroundColor": "#f5f7f6",
+            "enableNotifications": false,
+            "startUrl": "/dashboard/today",
+            "iconUrl": "${APP_URL}/icons/icon-512.png",
+            "maskableIconUrl": "${APP_URL}/icons/icon-512-maskable.png",
+            "splashScreenFadeOutDuration": 300,
+            "signingKey": {
+              "path": "./android.keystore",
+              "alias": "gosheros"
+            },
+            "appVersion": "1",
+            "appVersionName": "1",
+            "appVersionCode": 1,
+            "shortcuts": [],
+            "generatorApp": "bubblewrap-cli",
+            "webManifestUrl": "${APP_URL}/manifest.json",
+            "fallbackType": "customtabs",
+            "features": {},
+            "alphaDependencies": { "enabled": false },
+            "enableSiteSettingsShortcut": true,
+            "isChromeOSOnly": false,
+            "isMetaQuest": false,
+            "fullScopeUrl": "${APP_URL}/",
+            "minSdkVersion": 21,
+            "orientation": "portrait",
+            "fingerprints": [],
+            "additionalTrustedOrigins": [],
+            "retainedBundles": []
+          }
+          EOF
+
+      - name: Build APK
+        working-directory: twa-build
+        env:
+          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ env.KEYSTORE_PASSWORD }}
+          BUBBLEWRAP_KEY_PASSWORD: ${{ env.KEYSTORE_PASSWORD }}
+        run: bubblewrap build --skipPwaValidation
+
+      - name: Collect APK
+        working-directory: twa-build
+        run: |
+          find . -maxdepth 1 -iname "*.apk"
+          cp app-release-signed.apk go-sheros.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: go-sheros-apk
+          path: twa-build/go-sheros.apk
+
+      - name: Publish release with APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: "Go Sheros — Android APK"
+          body: |
+            Installable Android APK that wraps the live app at ${{ env.APP_URL }}.
+            This is a self-signed build for personal/sideloading use, not published on the Play Store —
+            Android will warn about an "unknown source" the first time you install it.
+            Rebuilding replaces this asset; if you already have the app installed, uninstall the old
+            one first since each build is signed with a fresh key.
+          files: twa-build/go-sheros.apk
+          make_latest: true
