@@ -92,6 +92,10 @@ jobs:
           }
           EOF
 
+      - name: Generate Android project from manifest
+        working-directory: twa-build
+        run: bubblewrap update --skipVersionUpgrade
+
       - name: Build APK
         working-directory: twa-build
         env:
