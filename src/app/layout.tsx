@@ -28,6 +28,11 @@ export const metadata: Metadata = {
   },
   description:
     "Turn your goals into a plan. Turn your plan into progress. An AI planning partner, task manager, and consistency coach in one place.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-512.png",
+  },
 };
 
 export const viewport: Viewport = {
