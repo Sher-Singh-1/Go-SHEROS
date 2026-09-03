@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/setup-totp"];
+const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/setup-totp", "/admin"];
 const AUTH_PAGES = ["/login", "/signup", "/login-totp"];
 const SESSION_COOKIE = "gosheros_session";
 
@@ -36,5 +36,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/onboarding", "/setup-totp", "/login", "/signup", "/login-totp"],
+  matcher: ["/dashboard/:path*", "/onboarding", "/setup-totp", "/admin/:path*", "/login", "/signup", "/login-totp"],
 };

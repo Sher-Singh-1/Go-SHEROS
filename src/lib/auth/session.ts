@@ -1,6 +1,7 @@
 import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { prisma } from "@/lib/db/client";
 
 const SESSION_COOKIE = "gosheros_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
@@ -34,11 +35,39 @@ export async function createSession(payload: SessionPayload) {
     path: "/",
     maxAge: SESSION_TTL_SECONDS,
   });
+
+  await prisma.loginEvent.create({ data: { userId: payload.userId } });
+}
+
+const ACTIVITY_TOUCH_INTERVAL_MS = 2 * 60 * 1000;
+
+export async function touchActivity(userId: string) {
+  const staleBefore = new Date(Date.now() - ACTIVITY_TOUCH_INTERVAL_MS);
+  await prisma.loginEvent.updateMany({
+    where: { userId, logoutAt: null, lastSeenAt: { lt: staleBefore } },
+    data: { lastSeenAt: new Date() },
+  });
 }
 
 export async function destroySession() {
   const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
   cookieStore.delete(SESSION_COOKIE);
+
+  if (token) {
+    try {
+      const { payload } = await jwtVerify(token, getSecretKey());
+      if (payload.sub) {
+        const now = new Date();
+        await prisma.loginEvent.updateMany({
+          where: { userId: payload.sub, logoutAt: null },
+          data: { logoutAt: now, lastSeenAt: now },
+        });
+      }
+    } catch {
+      // Expired/invalid token — nothing to close out.
+    }
+  }
 }
 
 export async function readSession(): Promise<SessionPayload | null> {

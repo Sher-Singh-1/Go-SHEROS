@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/client";
-import { readSession } from "@/lib/auth/session";
+import { readSession, touchActivity } from "@/lib/auth/session";
 
 export const getCurrentUser = cache(async () => {
   const session = await readSession();
@@ -12,6 +12,7 @@ export const getCurrentUser = cache(async () => {
     where: { id: session.userId },
     include: { profile: true, preferences: true, streak: true },
   });
+  if (user) await touchActivity(user.id);
   return user;
 });
 
@@ -25,5 +26,16 @@ export async function requireOnboardedUser() {
   const user = await requireUser();
   if (!user.totpEnabled) redirect("/setup-totp");
   if (!user.profile?.onboardedAt) redirect("/onboarding");
+  return user;
+}
+
+export function isAdminEmail(email: string) {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  return !!adminEmail && email.toLowerCase() === adminEmail.toLowerCase();
+}
+
+export async function requireAdmin() {
+  const user = await requireUser();
+  if (!isAdminEmail(user.email)) redirect("/dashboard");
   return user;
 }
