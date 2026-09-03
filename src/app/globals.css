@@ -2,35 +2,67 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* "Sunrise Contrast": vivid coral-red + sky blue on ivory — the default,
-   light, energetic look. Dark mode gets a matching lightened coral/blue so
-   toggling doesn't lose the identity. */
+/* Glassmorphism: a moody dusk-gradient backdrop with frosted, translucent
+   glass panels floating on top. This is the default look everywhere; an
+   explicit "light" choice in the toggle falls back to a plain warm-ivory
+   theme for anyone who doesn't want the dark glass treatment. */
 :root {
-  --bg: #fff8ec;
-  --surface: #ffffff;
-  --surface-2: #fdf0dc;
-  --surface-3: #f8e4c4;
-  --ink: #1c1712;
-  --ink-soft: #5a4d3d;
-  --ink-faint: #8c7c64;
-  --border: #f0ddb8;
-  --border-strong: #e0c48a;
-  --accent: #e2543a;
-  --accent-ink: #7a2410;
-  --accent-soft: #fbdcd0;
-  --accent-soft-border: #f0b8a2;
-  --teal: #4fa3d1;
-  --teal-soft: #d9edf5;
-  --danger: #b8331f;
-  --danger-soft: #f6dcd4;
-  --success: #4fa3d1;
-  --warning: #d98c2b;
-  --grid-dot: rgba(28, 23, 18, 0.1);
-  --ray-color: rgba(79, 163, 209, 0.14);
+  --bg: #0e1524;
+  --bg-gradient:
+    radial-gradient(1100px 700px at 78% 8%, rgba(255, 190, 140, 0.22), transparent 55%),
+    radial-gradient(900px 650px at 15% 95%, rgba(120, 170, 230, 0.16), transparent 55%),
+    linear-gradient(180deg, #1a2740 0%, #101a2c 45%, #0a0f1a 100%);
+  --surface: rgba(255, 255, 255, 0.08);
+  --surface-2: rgba(255, 255, 255, 0.12);
+  --surface-3: rgba(255, 255, 255, 0.17);
+  --ink: #f3f6fb;
+  --ink-soft: rgba(243, 246, 251, 0.72);
+  --ink-faint: rgba(243, 246, 251, 0.5);
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.26);
+  --accent: #ff6b4a;
+  --accent-ink: #fff1ea;
+  --accent-soft: rgba(255, 107, 74, 0.18);
+  --accent-soft-border: rgba(255, 107, 74, 0.38);
+  --teal: #5fb8ea;
+  --teal-soft: rgba(95, 184, 234, 0.18);
+  --danger: #ff8a72;
+  --danger-soft: rgba(255, 138, 114, 0.18);
+  --success: #5fb8ea;
+  --warning: #f5b25c;
+  --glass-blur: blur(20px) saturate(150%);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0e1524;
+  --bg-gradient:
+    radial-gradient(1100px 700px at 78% 8%, rgba(255, 190, 140, 0.22), transparent 55%),
+    radial-gradient(900px 650px at 15% 95%, rgba(120, 170, 230, 0.16), transparent 55%),
+    linear-gradient(180deg, #1a2740 0%, #101a2c 45%, #0a0f1a 100%);
+  --surface: rgba(255, 255, 255, 0.08);
+  --surface-2: rgba(255, 255, 255, 0.12);
+  --surface-3: rgba(255, 255, 255, 0.17);
+  --ink: #f3f6fb;
+  --ink-soft: rgba(243, 246, 251, 0.72);
+  --ink-faint: rgba(243, 246, 251, 0.5);
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.26);
+  --accent: #ff6b4a;
+  --accent-ink: #fff1ea;
+  --accent-soft: rgba(255, 107, 74, 0.18);
+  --accent-soft-border: rgba(255, 107, 74, 0.38);
+  --teal: #5fb8ea;
+  --teal-soft: rgba(95, 184, 234, 0.18);
+  --danger: #ff8a72;
+  --danger-soft: rgba(255, 138, 114, 0.18);
+  --success: #5fb8ea;
+  --warning: #f5b25c;
+  --glass-blur: blur(20px) saturate(150%);
 }
 
 :root[data-theme="light"] {
   --bg: #fff8ec;
+  --bg-gradient: none;
   --surface: #ffffff;
   --surface-2: #fdf0dc;
   --surface-3: #f8e4c4;
@@ -49,58 +81,7 @@
   --danger-soft: #f6dcd4;
   --success: #4fa3d1;
   --warning: #d98c2b;
-  --grid-dot: rgba(28, 23, 18, 0.1);
-  --ray-color: rgba(79, 163, 209, 0.14);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #17110c;
-    --surface: #221a12;
-    --surface-2: #2b2116;
-    --surface-3: #362a1c;
-    --ink: #fbe9d8;
-    --ink-soft: #d9c2a8;
-    --ink-faint: #a08b71;
-    --border: #3a2c1c;
-    --border-strong: #4f3d28;
-    --accent: #ff7a5c;
-    --accent-ink: #fff1e8;
-    --accent-soft: #40241c;
-    --accent-soft-border: #5e3527;
-    --teal: #7cc3ea;
-    --teal-soft: #1c3540;
-    --danger: #ff8a6b;
-    --danger-soft: #402420;
-    --success: #7cc3ea;
-    --warning: #eba84c;
-    --grid-dot: rgba(251, 233, 216, 0.1);
-    --ray-color: rgba(124, 195, 234, 0.14);
-  }
-}
-
-:root[data-theme="dark"] {
-  --bg: #17110c;
-  --surface: #221a12;
-  --surface-2: #2b2116;
-  --surface-3: #362a1c;
-  --ink: #fbe9d8;
-  --ink-soft: #d9c2a8;
-  --ink-faint: #a08b71;
-  --border: #3a2c1c;
-  --border-strong: #4f3d28;
-  --accent: #ff7a5c;
-  --accent-ink: #fff1e8;
-  --accent-soft: #40241c;
-  --accent-soft-border: #5e3527;
-  --teal: #7cc3ea;
-  --teal-soft: #1c3540;
-  --danger: #ff8a6b;
-  --danger-soft: #402420;
-  --success: #7cc3ea;
-  --warning: #eba84c;
-  --grid-dot: rgba(251, 233, 216, 0.1);
-  --ray-color: rgba(124, 195, 234, 0.14);
+  --glass-blur: none;
 }
 
 @theme inline {
@@ -123,8 +104,6 @@
   --color-danger-soft: var(--danger-soft);
   --color-success: var(--success);
   --color-warning: var(--warning);
-  --color-grid-dot: var(--grid-dot);
-  --color-ray: var(--ray-color);
 
   --font-display: var(--font-fraunces), "Iowan Old Style", "Palatino Linotype", serif;
   --font-sans: var(--font-public-sans), -apple-system, "Segoe UI", sans-serif;
@@ -141,16 +120,23 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Vertical tile lines + a couple of very soft light-blue ray glows, wherever
-   the app paints its base background — full-bleed bg-bg sections sit on top
-   of <body> and would otherwise hide this entirely. */
+/* The dusk-gradient backdrop, anchored to the viewport (not each element) so
+   it reads as one continuous scene behind every bg-bg container, however
+   many are nested or stacked. */
 .bg-bg {
-  background-image:
-    linear-gradient(90deg, var(--grid-dot) 1px, transparent 1px),
-    radial-gradient(760px 480px at 20% 0%, var(--ray-color), transparent 65%),
-    radial-gradient(620px 420px at 84% 4%, var(--ray-color), transparent 65%);
-  background-size: 44px 100%, 100% 100%, 100% 100%;
-  background-repeat: repeat, no-repeat, no-repeat;
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+/* Frosted glass panels — every card, sidebar, and input built on the surface
+   tokens gets a blur of whatever's behind it. No-op in the plain light theme
+   (--glass-blur: none there). */
+.bg-surface,
+.bg-surface-2,
+.bg-surface-3 {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 h1, h2, h3, h4 {
