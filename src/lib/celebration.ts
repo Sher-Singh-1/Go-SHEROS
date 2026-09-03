@@ -1,3 +1,5 @@
+import { isSoundEnabled } from "./preferences";
+
 const CONFETTI_COLORS = ["#ff6b4a", "#5fb8ea", "#f5b25c", "#f3f6fb", "#0e1524"];
 
 function prefersReducedMotion() {
@@ -10,7 +12,7 @@ function prefersReducedMotion() {
 
 /** A short, synthesized two-note chime — no audio file to ship or fetch. */
 export function playCompletionChime() {
-  if (prefersReducedMotion() || typeof window === "undefined") return;
+  if (prefersReducedMotion() || typeof window === "undefined" || !isSoundEnabled()) return;
   try {
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new AudioCtx();

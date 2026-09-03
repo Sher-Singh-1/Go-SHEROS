@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
-import { updateProfile, updatePreferences, changePassword } from "./actions";
+import { useActionState, useState } from "react";
+import { updateProfile, updatePreferences, updateNotificationSettings, changePassword } from "./actions";
 import type { FormState } from "@/app/(auth)/actions";
 import { Field, TextInput, FormError, FormInfo } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
 import { professions, professionLabels } from "@/lib/validation/onboarding";
 
 export function ProfileForm({ displayName, profession }: { displayName: string; profession: string }) {
@@ -59,6 +60,48 @@ export function PreferencesForm({
       <FormError message={state?.error} />
       <FormInfo message={state?.info} />
       <Button type="submit" disabled={pending} size="sm" className="self-start">{pending ? "Saving…" : "Save preferences"}</Button>
+    </form>
+  );
+}
+
+export function NotificationsForm({
+  reminderEnabled,
+  timeOfDay,
+  quietHoursStart,
+  quietHoursEnd,
+}: {
+  reminderEnabled: boolean;
+  timeOfDay: string;
+  quietHoursStart: number | null;
+  quietHoursEnd: number | null;
+}) {
+  const [state, formAction, pending] = useActionState<FormState, FormData>(updateNotificationSettings, undefined);
+  const [enabled, setEnabled] = useState(reminderEnabled);
+
+  return (
+    <form action={formAction} className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium">Daily planning reminder</p>
+          <p className="text-xs text-ink-soft">A nudge to plan your day, in-app.</p>
+        </div>
+        <input type="hidden" name="reminderEnabled" value={enabled ? "on" : "off"} />
+        <Toggle checked={enabled} onChange={setEnabled} label="Daily planning reminder" />
+      </div>
+      <Field label="Reminder time" htmlFor="timeOfDay" hint="24h">
+        <TextInput id="timeOfDay" name="timeOfDay" type="time" defaultValue={timeOfDay} className={!enabled ? "opacity-50" : undefined} />
+      </Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Quiet hours start" htmlFor="quietHoursStart" hint="24h, optional">
+          <TextInput id="quietHoursStart" name="quietHoursStart" type="number" min={0} max={23} defaultValue={quietHoursStart ?? ""} />
+        </Field>
+        <Field label="Quiet hours end" htmlFor="quietHoursEnd" hint="24h, optional">
+          <TextInput id="quietHoursEnd" name="quietHoursEnd" type="number" min={0} max={23} defaultValue={quietHoursEnd ?? ""} />
+        </Field>
+      </div>
+      <FormError message={state?.error} />
+      <FormInfo message={state?.info} />
+      <Button type="submit" disabled={pending} size="sm" className="self-start">{pending ? "Saving…" : "Save notifications"}</Button>
     </form>
   );
 }
