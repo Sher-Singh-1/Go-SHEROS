@@ -14,7 +14,7 @@ export function Sidebar({ displayName, email }: { displayName: string; email: st
     <aside className="hidden w-64 flex-none flex-col border-r border-border bg-surface md:flex">
       <div className="flex items-center justify-between px-6 py-6">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-gradient-to-br from-accent to-[#a85f17] font-display text-sm font-bold text-[#221202]">
+          <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-gradient-to-br from-accent to-[#a8341f] font-display text-sm font-bold text-[#fff8ec]">
             GS
           </span>
           <span className="font-display text-base font-semibold">Go Sheros</span>

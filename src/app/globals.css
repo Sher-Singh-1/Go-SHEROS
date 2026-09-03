@@ -2,79 +2,105 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Deep black-and-gold is the default look everywhere (not just a "dark mode"
-   toggle state) — rich beige lives on as the text/surface/accent color, plus
-   an explicit opt-out below for anyone who picks "light" from the toggle. */
+/* "Sunrise Contrast": vivid coral-red + sky blue on ivory — the default,
+   light, energetic look. Dark mode gets a matching lightened coral/blue so
+   toggling doesn't lose the identity. */
 :root {
-  --bg: #0f0c09;
-  --surface: #1b150f;
-  --surface-2: #221a13;
-  --surface-3: #2c2117;
-  --ink: #f2e6c9;
-  --ink-soft: #cdbb95;
-  --ink-faint: #948266;
-  --border: #332619;
-  --border-strong: #4a3a26;
-  --accent: #eba84c;
-  --accent-ink: #fce9c8;
-  --accent-soft: #3a2b14;
-  --accent-soft-border: #5c4420;
-  --teal: #c99a52;
-  --teal-soft: #2e2313;
-  --danger: #d98853;
-  --danger-soft: #3a2419;
-  --success: #c99a52;
-  --warning: #eba84c;
-  --grid-dot: rgba(242, 230, 201, 0.12);
-  --ray-color: rgba(147, 197, 253, 0.1);
-}
-
-:root[data-theme="dark"] {
-  --bg: #0f0c09;
-  --surface: #1b150f;
-  --surface-2: #221a13;
-  --surface-3: #2c2117;
-  --ink: #f2e6c9;
-  --ink-soft: #cdbb95;
-  --ink-faint: #948266;
-  --border: #332619;
-  --border-strong: #4a3a26;
-  --accent: #eba84c;
-  --accent-ink: #fce9c8;
-  --accent-soft: #3a2b14;
-  --accent-soft-border: #5c4420;
-  --teal: #c99a52;
-  --teal-soft: #2e2313;
-  --danger: #d98853;
-  --danger-soft: #3a2419;
-  --success: #c99a52;
-  --warning: #eba84c;
-  --grid-dot: rgba(242, 230, 201, 0.12);
-  --ray-color: rgba(147, 197, 253, 0.1);
-}
-
-:root[data-theme="light"] {
-  --bg: #f3e9d5;
-  --surface: #fdf9f0;
-  --surface-2: #ede0c4;
-  --surface-3: #e2d1a8;
+  --bg: #fff8ec;
+  --surface: #ffffff;
+  --surface-2: #fdf0dc;
+  --surface-3: #f8e4c4;
   --ink: #1c1712;
   --ink-soft: #5a4d3d;
   --ink-faint: #8c7c64;
-  --border: #ddc99b;
-  --border-strong: #c5ac76;
-  --accent: #c97a1f;
-  --accent-ink: #4a2d0a;
-  --accent-soft: #f0dcae;
-  --accent-soft-border: #dcb977;
-  --teal: #8a5a1f;
-  --teal-soft: #ecdcb8;
-  --danger: #9c4322;
-  --danger-soft: #f1dcc9;
-  --success: #8a5a1f;
-  --warning: #c97a1f;
-  --grid-dot: rgba(28, 23, 18, 0.16);
-  --ray-color: rgba(147, 197, 253, 0.04);
+  --border: #f0ddb8;
+  --border-strong: #e0c48a;
+  --accent: #e2543a;
+  --accent-ink: #7a2410;
+  --accent-soft: #fbdcd0;
+  --accent-soft-border: #f0b8a2;
+  --teal: #4fa3d1;
+  --teal-soft: #d9edf5;
+  --danger: #b8331f;
+  --danger-soft: #f6dcd4;
+  --success: #4fa3d1;
+  --warning: #d98c2b;
+  --grid-dot: rgba(28, 23, 18, 0.1);
+  --ray-color: rgba(79, 163, 209, 0.14);
+}
+
+:root[data-theme="light"] {
+  --bg: #fff8ec;
+  --surface: #ffffff;
+  --surface-2: #fdf0dc;
+  --surface-3: #f8e4c4;
+  --ink: #1c1712;
+  --ink-soft: #5a4d3d;
+  --ink-faint: #8c7c64;
+  --border: #f0ddb8;
+  --border-strong: #e0c48a;
+  --accent: #e2543a;
+  --accent-ink: #7a2410;
+  --accent-soft: #fbdcd0;
+  --accent-soft-border: #f0b8a2;
+  --teal: #4fa3d1;
+  --teal-soft: #d9edf5;
+  --danger: #b8331f;
+  --danger-soft: #f6dcd4;
+  --success: #4fa3d1;
+  --warning: #d98c2b;
+  --grid-dot: rgba(28, 23, 18, 0.1);
+  --ray-color: rgba(79, 163, 209, 0.14);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17110c;
+    --surface: #221a12;
+    --surface-2: #2b2116;
+    --surface-3: #362a1c;
+    --ink: #fbe9d8;
+    --ink-soft: #d9c2a8;
+    --ink-faint: #a08b71;
+    --border: #3a2c1c;
+    --border-strong: #4f3d28;
+    --accent: #ff7a5c;
+    --accent-ink: #fff1e8;
+    --accent-soft: #40241c;
+    --accent-soft-border: #5e3527;
+    --teal: #7cc3ea;
+    --teal-soft: #1c3540;
+    --danger: #ff8a6b;
+    --danger-soft: #402420;
+    --success: #7cc3ea;
+    --warning: #eba84c;
+    --grid-dot: rgba(251, 233, 216, 0.1);
+    --ray-color: rgba(124, 195, 234, 0.14);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #17110c;
+  --surface: #221a12;
+  --surface-2: #2b2116;
+  --surface-3: #362a1c;
+  --ink: #fbe9d8;
+  --ink-soft: #d9c2a8;
+  --ink-faint: #a08b71;
+  --border: #3a2c1c;
+  --border-strong: #4f3d28;
+  --accent: #ff7a5c;
+  --accent-ink: #fff1e8;
+  --accent-soft: #40241c;
+  --accent-soft-border: #5e3527;
+  --teal: #7cc3ea;
+  --teal-soft: #1c3540;
+  --danger: #ff8a6b;
+  --danger-soft: #402420;
+  --success: #7cc3ea;
+  --warning: #eba84c;
+  --grid-dot: rgba(251, 233, 216, 0.1);
+  --ray-color: rgba(124, 195, 234, 0.14);
 }
 
 @theme inline {
