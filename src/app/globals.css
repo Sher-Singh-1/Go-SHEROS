@@ -2,7 +2,58 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Deep black-and-gold is the default look everywhere (not just a "dark mode"
+   toggle state) — rich beige lives on as the text/surface/accent color, plus
+   an explicit opt-out below for anyone who picks "light" from the toggle. */
 :root {
+  --bg: #0f0c09;
+  --surface: #1b150f;
+  --surface-2: #221a13;
+  --surface-3: #2c2117;
+  --ink: #f2e6c9;
+  --ink-soft: #cdbb95;
+  --ink-faint: #948266;
+  --border: #332619;
+  --border-strong: #4a3a26;
+  --accent: #eba84c;
+  --accent-ink: #fce9c8;
+  --accent-soft: #3a2b14;
+  --accent-soft-border: #5c4420;
+  --teal: #c99a52;
+  --teal-soft: #2e2313;
+  --danger: #d98853;
+  --danger-soft: #3a2419;
+  --success: #c99a52;
+  --warning: #eba84c;
+  --grid-dot: rgba(242, 230, 201, 0.12);
+  --ray-color: rgba(147, 197, 253, 0.1);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f0c09;
+  --surface: #1b150f;
+  --surface-2: #221a13;
+  --surface-3: #2c2117;
+  --ink: #f2e6c9;
+  --ink-soft: #cdbb95;
+  --ink-faint: #948266;
+  --border: #332619;
+  --border-strong: #4a3a26;
+  --accent: #eba84c;
+  --accent-ink: #fce9c8;
+  --accent-soft: #3a2b14;
+  --accent-soft-border: #5c4420;
+  --teal: #c99a52;
+  --teal-soft: #2e2313;
+  --danger: #d98853;
+  --danger-soft: #3a2419;
+  --success: #c99a52;
+  --warning: #eba84c;
+  --grid-dot: rgba(242, 230, 201, 0.12);
+  --ray-color: rgba(147, 197, 253, 0.1);
+}
+
+:root[data-theme="light"] {
   --bg: #f3e9d5;
   --surface: #fdf9f0;
   --surface-2: #ede0c4;
@@ -23,54 +74,7 @@
   --success: #8a5a1f;
   --warning: #c97a1f;
   --grid-dot: rgba(28, 23, 18, 0.16);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #100d0a;
-    --surface: #1c1610;
-    --surface-2: #241c14;
-    --surface-3: #2e2418;
-    --ink: #f2e6c9;
-    --ink-soft: #cbb994;
-    --ink-faint: #93826a;
-    --border: #33281b;
-    --border-strong: #473828;
-    --accent: #eba84c;
-    --accent-ink: #fce9c8;
-    --accent-soft: #3a2b14;
-    --accent-soft-border: #5c4420;
-    --teal: #c99a52;
-    --teal-soft: #2e2313;
-    --danger: #d98853;
-    --danger-soft: #3a2419;
-    --success: #c99a52;
-    --warning: #eba84c;
-    --grid-dot: rgba(242, 230, 201, 0.1);
-  }
-}
-
-:root[data-theme="dark"] {
-  --bg: #100d0a;
-  --surface: #1c1610;
-  --surface-2: #241c14;
-  --surface-3: #2e2418;
-  --ink: #f2e6c9;
-  --ink-soft: #cbb994;
-  --ink-faint: #93826a;
-  --border: #33281b;
-  --border-strong: #473828;
-  --accent: #eba84c;
-  --accent-ink: #fce9c8;
-  --accent-soft: #3a2b14;
-  --accent-soft-border: #5c4420;
-  --teal: #c99a52;
-  --teal-soft: #2e2313;
-  --danger: #d98853;
-  --danger-soft: #3a2419;
-  --success: #c99a52;
-  --warning: #eba84c;
-  --grid-dot: rgba(242, 230, 201, 0.1);
+  --ray-color: rgba(147, 197, 253, 0.04);
 }
 
 @theme inline {
@@ -94,6 +98,7 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-grid-dot: var(--grid-dot);
+  --color-ray: var(--ray-color);
 
   --font-display: var(--font-fraunces), "Iowan Old Style", "Palatino Linotype", serif;
   --font-sans: var(--font-public-sans), -apple-system, "Segoe UI", sans-serif;
@@ -110,13 +115,16 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Tiled grid texture wherever the app paints its base background — full-bleed
-   bg-bg sections sit on top of <body> and would otherwise hide this entirely. */
+/* Vertical tile lines + a couple of very soft light-blue ray glows, wherever
+   the app paints its base background — full-bleed bg-bg sections sit on top
+   of <body> and would otherwise hide this entirely. */
 .bg-bg {
   background-image:
-    linear-gradient(var(--grid-dot) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-dot) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(90deg, var(--grid-dot) 1px, transparent 1px),
+    radial-gradient(760px 480px at 20% 0%, var(--ray-color), transparent 65%),
+    radial-gradient(620px 420px at 84% 4%, var(--ray-color), transparent 65%);
+  background-size: 44px 100%, 100% 100%, 100% 100%;
+  background-repeat: repeat, no-repeat, no-repeat;
 }
 
 h1, h2, h3, h4 {
