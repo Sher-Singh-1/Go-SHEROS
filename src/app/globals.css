@@ -3,71 +3,74 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --bg: #f5f7f6;
-  --surface: #ffffff;
-  --surface-2: #ebefec;
-  --surface-3: #e1e7e3;
-  --ink: #13201e;
-  --ink-soft: #4c5a56;
-  --ink-faint: #7c8a85;
-  --border: #dce4df;
-  --border-strong: #c4d0c9;
+  --bg: #f3e9d5;
+  --surface: #fdf9f0;
+  --surface-2: #ede0c4;
+  --surface-3: #e2d1a8;
+  --ink: #1c1712;
+  --ink-soft: #5a4d3d;
+  --ink-faint: #8c7c64;
+  --border: #ddc99b;
+  --border-strong: #c5ac76;
   --accent: #c97a1f;
-  --accent-ink: #5c3a0e;
-  --accent-soft: #f3e0be;
-  --accent-soft-border: #e4c68c;
-  --teal: #2f7a63;
-  --teal-soft: #dceee7;
-  --danger: #b4502f;
-  --danger-soft: #f3dfd4;
-  --success: #2f7a63;
+  --accent-ink: #4a2d0a;
+  --accent-soft: #f0dcae;
+  --accent-soft-border: #dcb977;
+  --teal: #8a5a1f;
+  --teal-soft: #ecdcb8;
+  --danger: #9c4322;
+  --danger-soft: #f1dcc9;
+  --success: #8a5a1f;
   --warning: #c97a1f;
+  --grid-dot: rgba(28, 23, 18, 0.16);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1613;
-    --surface: #141f1b;
-    --surface-2: #1a2621;
-    --surface-3: #233028;
-    --ink: #ecf3ef;
-    --ink-soft: #a7b8b0;
-    --ink-faint: #748580;
-    --border: #26352e;
-    --border-strong: #344539;
+    --bg: #100d0a;
+    --surface: #1c1610;
+    --surface-2: #241c14;
+    --surface-3: #2e2418;
+    --ink: #f2e6c9;
+    --ink-soft: #cbb994;
+    --ink-faint: #93826a;
+    --border: #33281b;
+    --border-strong: #473828;
     --accent: #eba84c;
     --accent-ink: #fce9c8;
     --accent-soft: #3a2b14;
     --accent-soft-border: #5c4420;
-    --teal: #5fbc9e;
-    --teal-soft: #173029;
-    --danger: #e08a63;
+    --teal: #c99a52;
+    --teal-soft: #2e2313;
+    --danger: #d98853;
     --danger-soft: #3a2419;
-    --success: #5fbc9e;
+    --success: #c99a52;
     --warning: #eba84c;
+    --grid-dot: rgba(242, 230, 201, 0.1);
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: #0e1613;
-  --surface: #141f1b;
-  --surface-2: #1a2621;
-  --surface-3: #233028;
-  --ink: #ecf3ef;
-  --ink-soft: #a7b8b0;
-  --ink-faint: #748580;
-  --border: #26352e;
-  --border-strong: #344539;
+  --bg: #100d0a;
+  --surface: #1c1610;
+  --surface-2: #241c14;
+  --surface-3: #2e2418;
+  --ink: #f2e6c9;
+  --ink-soft: #cbb994;
+  --ink-faint: #93826a;
+  --border: #33281b;
+  --border-strong: #473828;
   --accent: #eba84c;
   --accent-ink: #fce9c8;
   --accent-soft: #3a2b14;
   --accent-soft-border: #5c4420;
-  --teal: #5fbc9e;
-  --teal-soft: #173029;
-  --danger: #e08a63;
+  --teal: #c99a52;
+  --teal-soft: #2e2313;
+  --danger: #d98853;
   --danger-soft: #3a2419;
-  --success: #5fbc9e;
+  --success: #c99a52;
   --warning: #eba84c;
+  --grid-dot: rgba(242, 230, 201, 0.1);
 }
 
 @theme inline {
@@ -90,6 +93,7 @@
   --color-danger-soft: var(--danger-soft);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-grid-dot: var(--grid-dot);
 
   --font-display: var(--font-fraunces), "Iowan Old Style", "Palatino Linotype", serif;
   --font-sans: var(--font-public-sans), -apple-system, "Segoe UI", sans-serif;
@@ -101,9 +105,18 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background-color: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
+}
+
+/* Tiled grid texture wherever the app paints its base background — full-bleed
+   bg-bg sections sit on top of <body> and would otherwise hide this entirely. */
+.bg-bg {
+  background-image:
+    linear-gradient(var(--grid-dot) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-dot) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 h1, h2, h3, h4 {

@@ -1,0 +1,4 @@
+# One-off local/maintenance scripts — not part of the deployed app, and not
+# tracked in git. Excluding them keeps `vercel deploy` from bundling (and
+# type-checking) in-progress scratch scripts that live only on disk.
+scripts/

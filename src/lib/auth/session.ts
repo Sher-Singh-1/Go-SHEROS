@@ -43,10 +43,19 @@ const ACTIVITY_TOUCH_INTERVAL_MS = 2 * 60 * 1000;
 
 export async function touchActivity(userId: string) {
   const staleBefore = new Date(Date.now() - ACTIVITY_TOUCH_INTERVAL_MS);
-  await prisma.loginEvent.updateMany({
+  const { count } = await prisma.loginEvent.updateMany({
     where: { userId, logoutAt: null, lastSeenAt: { lt: staleBefore } },
     data: { lastSeenAt: new Date() },
   });
+  if (count > 0) return;
+
+  // No stale row got touched — either there's a fresh one already (nothing to
+  // do), or this session predates login tracking / its row was lost, in which
+  // case back-fill one so "last active" stops reading as "never".
+  const hasOpenEvent = await prisma.loginEvent.findFirst({ where: { userId, logoutAt: null }, select: { id: true } });
+  if (!hasOpenEvent) {
+    await prisma.loginEvent.create({ data: { userId } });
+  }
 }
 
 export async function destroySession() {

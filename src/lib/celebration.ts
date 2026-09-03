@@ -1,4 +1,4 @@
-const CONFETTI_COLORS = ["#c97a1f", "#2f7a63", "#eba84c", "#5fbc9e", "#f3e0be"];
+const CONFETTI_COLORS = ["#c97a1f", "#eba84c", "#8a5a1f", "#f3e0be", "#1c1712"];
 
 function prefersReducedMotion() {
   if (typeof window === "undefined") return true;

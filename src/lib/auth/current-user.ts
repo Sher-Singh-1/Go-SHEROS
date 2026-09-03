@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db/client";
 import { readSession, touchActivity } from "@/lib/auth/session";
 
@@ -36,6 +36,8 @@ export function isAdminEmail(email: string) {
 
 export async function requireAdmin() {
   const user = await requireUser();
-  if (!isAdminEmail(user.email)) redirect("/dashboard");
+  // 404, not a redirect — a non-admin (or a curious authenticated user)
+  // shouldn't be able to tell this route exists at all.
+  if (!isAdminEmail(user.email)) notFound();
   return user;
 }
