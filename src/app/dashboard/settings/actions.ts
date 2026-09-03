@@ -46,6 +46,34 @@ export async function updatePreferences(_prev: FormState, formData: FormData): P
   return { info: "Saved." };
 }
 
+export async function updateNotificationSettings(_prev: FormState, formData: FormData): Promise<FormState> {
+  const user = await requireUser();
+  const reminderEnabled = formData.get("reminderEnabled") === "on";
+  const timeOfDay = String(formData.get("timeOfDay") ?? "08:00");
+  const quietHoursStartRaw = formData.get("quietHoursStart");
+  const quietHoursEndRaw = formData.get("quietHoursEnd");
+  const quietHoursStart = quietHoursStartRaw ? Number(quietHoursStartRaw) : null;
+  const quietHoursEnd = quietHoursEndRaw ? Number(quietHoursEndRaw) : null;
+
+  if (!/^\d{2}:\d{2}$/.test(timeOfDay)) return { error: "Invalid reminder time." };
+  if (quietHoursStart !== null && (quietHoursStart < 0 || quietHoursStart > 23)) return { error: "Quiet hours start must be 0-23." };
+  if (quietHoursEnd !== null && (quietHoursEnd < 0 || quietHoursEnd > 23)) return { error: "Quiet hours end must be 0-23." };
+
+  const existing = await prisma.reminderRule.findFirst({ where: { userId: user.id, type: "DAILY_PLANNING" } });
+  if (existing) {
+    await prisma.reminderRule.update({ where: { id: existing.id }, data: { enabled: reminderEnabled, timeOfDay } });
+  } else {
+    await prisma.reminderRule.create({
+      data: { userId: user.id, type: "DAILY_PLANNING", channel: "IN_APP", enabled: reminderEnabled, timeOfDay },
+    });
+  }
+
+  await prisma.userPreferences.update({ where: { userId: user.id }, data: { quietHoursStart, quietHoursEnd } });
+
+  revalidatePath("/dashboard/settings");
+  return { info: "Saved." };
+}
+
 export async function changePassword(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await requireUser();
   const currentPassword = String(formData.get("currentPassword") ?? "");

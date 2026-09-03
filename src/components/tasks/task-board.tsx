@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { clsx } from "clsx";
+import { isShowCompletedDefault } from "@/lib/preferences";
 import { SortableTaskList } from "./sortable-task-list";
 import type { TaskRowData } from "./task-row";
 
@@ -9,6 +10,15 @@ type Filter = "ALL" | "PENDING" | "COMPLETED";
 
 export function TaskBoard({ title, tasks }: { title: string; tasks: TaskRowData[] }) {
   const [filter, setFilter] = useState<Filter>("ALL");
+
+  useEffect(() => {
+    // "Show completed tasks" (Settings → General) defaults this view to
+    // Pending-only for anyone who's turned it off — localStorage isn't
+    // readable during SSR, so this has to run post-mount like the theme
+    // toggle above it.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (!isShowCompletedDefault()) setFilter("PENDING");
+  }, []);
 
   const filtered = tasks.filter((t) => {
     if (filter === "PENDING") return t.status !== "COMPLETED";

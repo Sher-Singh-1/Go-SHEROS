@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 import { isBefore, startOfDay } from "date-fns";
@@ -9,6 +9,7 @@ import { TaskEditModal } from "./task-edit-modal";
 import { celebrate } from "@/lib/celebration";
 import { parseResourceLinks } from "@/lib/tasks/resource-links";
 import { ResourceLinkChips } from "./resource-link-chips";
+import { formatTaskTime, getTimeFormat, type TimeFormat } from "@/lib/preferences";
 import type { Priority, TaskStatus } from "@prisma/client";
 
 export type TaskRowData = {
@@ -34,7 +35,13 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [timeFormat, setTimeFormatState] = useState<TimeFormat>("12h");
   const router = useRouter();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTimeFormatState(getTimeFormat());
+  }, []);
 
   const isCompleted = task.status === "COMPLETED";
   const isOverdue = !isCompleted && task.status !== "SKIPPED" && isBefore(startOfDay(task.date), startOfDay(new Date()));
@@ -86,7 +93,7 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
       >
         <p className={clsx("truncate text-sm font-medium", isCompleted && "text-ink-faint line-through")}>{task.title}</p>
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-faint">
-          {task.startTime && <span className="font-mono">{task.startTime}</span>}
+          {task.startTime && <span className="font-mono">{formatTaskTime(task.startTime, timeFormat)}</span>}
           {task.estimatedMinutes && <span>{task.estimatedMinutes}m</span>}
           {task.category && <span>{task.category}</span>}
           {isCompleted && <span className="rounded-full bg-teal-soft px-1.5 py-0.5 font-medium text-teal">Done</span>}
