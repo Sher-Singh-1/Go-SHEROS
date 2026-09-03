@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 import { isBefore, startOfDay } from "date-fns";
-import { setTaskStatus, deleteTask } from "@/app/dashboard/tasks/actions";
+import { setTaskStatus, deleteTask, toggleTaskPriority } from "@/app/dashboard/tasks/actions";
 import { TaskEditModal } from "./task-edit-modal";
 import { celebrate } from "@/lib/celebration";
 import { parseResourceLinks } from "@/lib/tasks/resource-links";
@@ -56,7 +56,7 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
   return (
     <div
       className={clsx(
-        "group rounded-xl border border-border bg-surface px-4 py-3 transition-opacity",
+        "group glass-card rounded-xl border border-border bg-surface px-4 py-3 transition-opacity",
         pending && "opacity-60"
       )}
     >
@@ -89,9 +89,25 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
           {task.startTime && <span className="font-mono">{task.startTime}</span>}
           {task.estimatedMinutes && <span>{task.estimatedMinutes}m</span>}
           {task.category && <span>{task.category}</span>}
+          {isCompleted && <span className="rounded-full bg-teal-soft px-1.5 py-0.5 font-medium text-teal">Done</span>}
           {isOverdue && <span className="font-medium text-danger">Overdue</span>}
           {hasDetails && <span className="font-medium text-teal">{expanded ? "Hide details" : "Details"}</span>}
         </div>
+      </button>
+
+      <button
+        onClick={() => startTransition(async () => { await toggleTaskPriority(task.id); router.refresh(); })}
+        aria-pressed={task.priority === "HIGH"}
+        aria-label={task.priority === "HIGH" ? "Unstar (remove high priority)" : "Star (mark high priority)"}
+        title={task.priority === "HIGH" ? "High priority" : "Mark as high priority"}
+        className={clsx(
+          "flex-none rounded-md p-1.5 transition-colors",
+          task.priority === "HIGH" ? "text-warning" : "text-ink-faint opacity-0 hover:text-ink group-hover:opacity-100"
+        )}
+      >
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill={task.priority === "HIGH" ? "currentColor" : "none"} stroke="currentColor" strokeWidth={1.7}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="m12 3 2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6Z" />
+        </svg>
       </button>
 
       <button

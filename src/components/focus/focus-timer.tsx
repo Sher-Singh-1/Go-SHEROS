@@ -203,7 +203,7 @@ export function FocusTimer({ tasks }: { tasks: FocusTask[] }) {
   }
 
   return (
-    <div className="flex flex-col gap-6 rounded-2xl border border-border bg-surface p-8">
+    <div className="glass-card flex flex-col gap-6 rounded-2xl border border-border bg-surface p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <select
           value={taskId}
@@ -241,6 +241,10 @@ export function FocusTimer({ tasks }: { tasks: FocusTask[] }) {
       >
         Enter full-screen focus mode
       </button>
+
+      <p className="text-center text-sm italic text-ink-faint">
+        <span className="text-teal">&ldquo;</span> Stay focused. Great things take time. <span className="text-teal">&rdquo;</span>
+      </p>
     </div>
   );
 }

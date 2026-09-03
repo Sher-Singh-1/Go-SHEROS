@@ -92,6 +92,24 @@ export async function setTaskStatus(taskId: string, status: TaskStatus) {
   if (task.goalId) revalidatePath(`/dashboard/goals/${task.goalId}`);
 }
 
+// Reuses the existing `priority` field as a lightweight star/pin toggle:
+// starring a task simply promotes it to HIGH (unstarring drops it back to
+// MEDIUM), so it surfaces in "Focus on these first" without a new column.
+export async function toggleTaskPriority(taskId: string) {
+  const user = await requireUser();
+  const task = await prisma.task.findUnique({ where: { id: taskId, userId: user.id }, select: { priority: true } });
+  if (!task) return;
+
+  await prisma.task.update({
+    where: { id: taskId, userId: user.id },
+    data: { priority: task.priority === "HIGH" ? "MEDIUM" : "HIGH" },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/today");
+  revalidatePath("/dashboard/calendar");
+}
+
 export async function deleteTask(taskId: string) {
   const user = await requireUser();
   await prisma.task.delete({ where: { id: taskId, userId: user.id } });

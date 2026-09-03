@@ -14,6 +14,7 @@ import {
 import { requireOnboardedUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db/client";
 import { clsx } from "clsx";
+import { PageHeader } from "@/components/ui/page-header";
 
 const PRIORITY_DOT: Record<string, string> = { HIGH: "bg-danger", MEDIUM: "bg-accent", LOW: "bg-teal" };
 
@@ -47,18 +48,24 @@ export default async function CalendarPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">{format(anchor, "MMMM yyyy")}</h1>
-        <div className="flex items-center gap-1">
-          <Link href={`/dashboard/calendar?month=${prevMonth}`} className="rounded-lg p-2 text-ink-soft hover:bg-surface-2" aria-label="Previous month">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" /></svg>
-          </Link>
-          <Link href="/dashboard/calendar" className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-teal hover:bg-surface-2">This month</Link>
-          <Link href={`/dashboard/calendar?month=${nextMonth}`} className="rounded-lg p-2 text-ink-soft hover:bg-surface-2" aria-label="Next month">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" /></svg>
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title="Calendar"
+        subtitle="Plan your days. Achieve your goals."
+        right={
+          <>
+            <span className="mr-2 hidden text-sm font-medium text-ink-soft sm:inline">{format(anchor, "MMMM yyyy")}</span>
+            <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-1">
+              <Link href={`/dashboard/calendar?month=${prevMonth}`} className="rounded-md p-1.5 text-ink-soft hover:bg-surface-2" aria-label="Previous month">
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" /></svg>
+              </Link>
+              <Link href="/dashboard/calendar" className="rounded-md bg-surface-2 px-2.5 py-1.5 text-xs font-medium text-teal hover:bg-surface-3">Today</Link>
+              <Link href={`/dashboard/calendar?month=${nextMonth}`} className="rounded-md p-1.5 text-ink-soft hover:bg-surface-2" aria-label="Next month">
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" /></svg>
+              </Link>
+            </div>
+          </>
+        }
+      />
 
       <div className="overflow-x-auto">
         <div className="min-w-[700px]">
@@ -76,8 +83,9 @@ export default async function CalendarPage({
                   key={key}
                   href={`/dashboard/today?date=${key}`}
                   className={clsx(
-                    "flex min-h-[92px] flex-col gap-1 rounded-xl border border-border bg-surface p-2 text-left hover:border-border-strong",
-                    !isSameMonth(day, anchor) && "opacity-40"
+                    "glass-card flex min-h-[92px] flex-col gap-1 rounded-xl border border-border bg-surface p-2 text-left hover:border-border-strong",
+                    !isSameMonth(day, anchor) && "opacity-40",
+                    isToday(day) && "border-accent-soft-border"
                   )}
                 >
                   <span className={clsx("self-start rounded-full px-1.5 text-xs font-medium", isToday(day) && "bg-accent text-accent-ink")}>
