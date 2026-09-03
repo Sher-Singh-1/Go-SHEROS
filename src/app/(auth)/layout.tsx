@@ -4,7 +4,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-bg px-4 py-12">
       <Link href="/" className="mb-8 flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gradient-to-br from-accent to-[#a85f17] font-display text-base font-bold text-[#221202]">
+        <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gradient-to-br from-accent to-[#a8341f] font-display text-base font-bold text-[#fff8ec]">
           GS
         </span>
         <span className="font-display text-lg font-semibold text-ink">Go Sheros</span>

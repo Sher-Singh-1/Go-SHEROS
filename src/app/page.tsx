@@ -40,7 +40,7 @@ export default function LandingPage() {
     <div className="flex min-h-screen flex-col bg-bg">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-gradient-to-br from-accent to-[#a85f17] font-display text-sm font-bold text-[#221202]">
+          <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-gradient-to-br from-accent to-[#a8341f] font-display text-sm font-bold text-[#fff8ec]">
             GS
           </span>
           <span className="font-display text-base font-semibold">Go Sheros</span>
