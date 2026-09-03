@@ -29,8 +29,22 @@ model User {
   reminderRules ReminderRule[]
   notifications Notification[]
   backupCodes   BackupCode[]
+  loginEvents   LoginEvent[]
 
   @@map("users")
+}
+
+model LoginEvent {
+  id         String    @id @default(cuid())
+  userId     String
+  loginAt    DateTime  @default(now())
+  lastSeenAt DateTime  @default(now())
+  logoutAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, loginAt])
+  @@map("login_events")
 }
 
 model BackupCode {
