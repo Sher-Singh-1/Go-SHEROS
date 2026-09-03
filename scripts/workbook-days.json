@@ -1,0 +1,1672 @@
+[
+  {
+    "num": 1,
+    "topic": "Linux baseline",
+    "concepts": "Filesystem, users, permissions",
+    "handsOn": "Create users; chmod/chown; navigate /etc /var /home",
+    "deliverable": "Linux notes",
+    "review": "chmod vs chown",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 2,
+    "topic": "Processes/services",
+    "concepts": "ps, top, systemctl, signals",
+    "handsOn": "Start/stop/restart service; inspect process; kill safely",
+    "deliverable": "Service runbook",
+    "review": "Find failed service",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 3,
+    "topic": "Logs",
+    "concepts": "journalctl, grep, tail, syslog",
+    "handsOn": "Find service errors and filter logs by time",
+    "deliverable": "Log runbook",
+    "review": "Debug failed service",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 4,
+    "topic": "Disk/memory",
+    "concepts": "df, du, free, vmstat, inodes",
+    "handsOn": "Simulate disk usage; find large files; inspect memory",
+    "deliverable": "Disk/memory runbook",
+    "review": "Disk 100% checks",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 5,
+    "topic": "Performance",
+    "concepts": "load average, uptime, top/htop",
+    "handsOn": "Create CPU load and identify process",
+    "deliverable": "Performance runbook",
+    "review": "High CPU",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 6,
+    "topic": "SSH",
+    "concepts": "keys, ssh config, scp",
+    "handsOn": "Generate key; key login; secure file copy",
+    "deliverable": "SSH lab",
+    "review": "Key vs password",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 7,
+    "topic": "Bash/cron",
+    "concepts": "scripts, exit codes, cron",
+    "handsOn": "Write backup/log cleanup script and schedule it",
+    "deliverable": "Bash script #1",
+    "review": "Exit code 0",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 8,
+    "topic": "Git basics",
+    "concepts": "clone, add, commit, push, branch",
+    "handsOn": "Create repo; branch; commit; push",
+    "deliverable": "Git repo",
+    "review": "Staging vs working tree",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs"
+    ]
+  },
+  {
+    "num": 9,
+    "topic": "Git collaboration",
+    "concepts": "merge, rebase, conflicts",
+    "handsOn": "Create and resolve conflict",
+    "deliverable": "Conflict notes",
+    "review": "Merge vs rebase",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs"
+    ]
+  },
+  {
+    "num": 10,
+    "topic": "Networking",
+    "concepts": "IP, ports, TCP/UDP, DNS, HTTP",
+    "handsOn": "Use ping, curl, ss, dig/nslookup",
+    "deliverable": "Network sheet",
+    "review": "What happens on website request",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 11,
+    "topic": "Docker",
+    "concepts": "image, container, registry",
+    "handsOn": "Run nginx; inspect lifecycle",
+    "deliverable": "Docker notes",
+    "review": "Image vs container",
+    "resources": [
+      "Docker Get Started",
+      "Docker Docs"
+    ]
+  },
+  {
+    "num": 12,
+    "topic": "Dockerfile",
+    "concepts": "FROM, RUN, COPY, CMD, ENTRYPOINT",
+    "handsOn": "Containerize a small app",
+    "deliverable": "Dockerfile",
+    "review": "CMD vs ENTRYPOINT",
+    "resources": [
+      "Docker Get Started",
+      "Docker Docs"
+    ]
+  },
+  {
+    "num": 13,
+    "topic": "Docker storage",
+    "concepts": "volumes, bind mounts",
+    "handsOn": "Persist data through container recreation",
+    "deliverable": "Volume lab",
+    "review": "Volume vs bind",
+    "resources": [
+      "Docker Get Started",
+      "Docker Docs"
+    ]
+  },
+  {
+    "num": 14,
+    "topic": "Docker networking",
+    "concepts": "bridge, ports, container DNS",
+    "handsOn": "Run app + DB on network",
+    "deliverable": "Network lab",
+    "review": "localhost inside container",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 15,
+    "topic": "Compose",
+    "concepts": "services, env, depends_on",
+    "handsOn": "Build multi-container app",
+    "deliverable": "compose.yaml",
+    "review": "Compose use case",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux",
+      "Pro Git Book"
+    ]
+  },
+  {
+    "num": 16,
+    "topic": "Docker troubleshooting",
+    "concepts": "logs, exec, inspect, stats",
+    "handsOn": "Break container and diagnose restart/failure",
+    "deliverable": "Docker runbook",
+    "review": "Restarting container",
+    "resources": [
+      "Docker Get Started",
+      "Docker Docs"
+    ]
+  },
+  {
+    "num": 17,
+    "topic": "Docker optimization",
+    "concepts": "layers, cache, .dockerignore",
+    "handsOn": "Optimize Dockerfile",
+    "deliverable": "Optimized Dockerfile",
+    "review": "Build cache",
+    "resources": [
+      "Docker Get Started",
+      "Docker Docs"
+    ]
+  },
+  {
+    "num": 18,
+    "topic": "Bash scripting",
+    "concepts": "variables, conditions, loops, functions",
+    "handsOn": "Write deployment helper",
+    "deliverable": "Bash script #2",
+    "review": "Safe failure",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 19,
+    "topic": "Automation",
+    "concepts": "curl, health checks, retries",
+    "handsOn": "Automate health check",
+    "deliverable": "Health script",
+    "review": "Why automate",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux",
+      "Pro Git Book"
+    ]
+  },
+  {
+    "num": 20,
+    "topic": "Foundation test",
+    "concepts": "Linux + Git + network + Docker",
+    "handsOn": "Solve 5 broken scenarios",
+    "deliverable": "Assessment",
+    "review": "30-min revision",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux",
+      "Pro Git Book"
+    ]
+  },
+  {
+    "num": 21,
+    "topic": "CI/CD concepts",
+    "concepts": "CI vs CD, stages, artifacts",
+    "handsOn": "Draw capstone pipeline",
+    "deliverable": "Pipeline diagram",
+    "review": "CI vs CD",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 22,
+    "topic": "GitHub Actions",
+    "concepts": "workflow, jobs, steps, runners",
+    "handsOn": "First workflow on push",
+    "deliverable": "workflow.yml",
+    "review": "Runner vs job",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs"
+    ]
+  },
+  {
+    "num": 23,
+    "topic": "Build/test",
+    "concepts": "checkout, setup, tests",
+    "handsOn": "Automated test stage",
+    "deliverable": "CI v1",
+    "review": "What CI catches",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 24,
+    "topic": "Secrets",
+    "concepts": "secrets, env vars",
+    "handsOn": "Use dummy secret safely",
+    "deliverable": "Secrets notes",
+    "review": "Why not hard-code",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 25,
+    "topic": "Docker CI",
+    "concepts": "docker build/tag",
+    "handsOn": "Build image in pipeline",
+    "deliverable": "CI v2",
+    "review": "Tagging",
+    "resources": [
+      "Docker Get Started",
+      "Docker Docs"
+    ]
+  },
+  {
+    "num": 26,
+    "topic": "Registry",
+    "concepts": "ECR, repositories, tags",
+    "handsOn": "Create ECR and push image",
+    "deliverable": "Registry lab",
+    "review": "Registry vs repo",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 27,
+    "topic": "CI→ ECR",
+    "concepts": "auth, push",
+    "handsOn": "Pipeline builds and pushes image",
+    "deliverable": "CI/CD v1",
+    "review": "Explain pipeline",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 28,
+    "topic": "Deployment strategy",
+    "concepts": "manual, rolling, blue-green",
+    "handsOn": "Document target deployment",
+    "deliverable": "Deployment plan",
+    "review": "Rolling vs blue-green",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 29,
+    "topic": "Pipeline troubleshooting",
+    "concepts": "logs, exit codes",
+    "handsOn": "Break workflow and fix it",
+    "deliverable": "Troubleshooting notes",
+    "review": "Debug failed pipeline",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 30,
+    "topic": "Quality gates",
+    "concepts": "lint, test, build",
+    "handsOn": "Add gate before image push",
+    "deliverable": "CI/CD v2",
+    "review": "Quality gates",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 31,
+    "topic": "Artifacts/cache",
+    "concepts": "artifacts, dependency cache",
+    "handsOn": "Cache dependency; upload artifact",
+    "deliverable": "Workflow v3",
+    "review": "Artifact vs image",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 32,
+    "topic": "Branch/PR workflow",
+    "concepts": "feature/main, PR checks",
+    "handsOn": "CI on pull requests",
+    "deliverable": "PR workflow",
+    "review": "Branch protection",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 33,
+    "topic": "CD trigger",
+    "concepts": "manual approval concept",
+    "handsOn": "Create deploy workflow skeleton",
+    "deliverable": "CD skeleton",
+    "review": "Separate CI/CD",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 34,
+    "topic": "Capstone CI",
+    "concepts": "GitHub + Docker + CI",
+    "handsOn": "Connect capstone to pipeline",
+    "deliverable": "Working CI",
+    "review": "10-min explanation",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 35,
+    "topic": "CI/CD assessment",
+    "concepts": "full revision",
+    "handsOn": "Build pipeline from blank repo",
+    "deliverable": "Assessment",
+    "review": "Interview drill",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 36,
+    "topic": "AWS basics",
+    "concepts": "regions, AZs, shared responsibility",
+    "handsOn": "AWS hygiene + billing alert checklist",
+    "deliverable": "AWS notes",
+    "review": "Region vs AZ",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 37,
+    "topic": "IAM",
+    "concepts": "users, roles, policies",
+    "handsOn": "Least-privilege test setup",
+    "deliverable": "IAM lab",
+    "review": "User vs role",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 38,
+    "topic": "EC2",
+    "concepts": "AMI, instance, EBS",
+    "handsOn": "Launch, SSH, terminate test instance",
+    "deliverable": "EC2 lab",
+    "review": "AMI",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 39,
+    "topic": "EC2 deployment",
+    "concepts": "packages, services",
+    "handsOn": "Install Docker and run app",
+    "deliverable": "AWS deploy #1",
+    "review": "Docker on EC2",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 40,
+    "topic": "Security Groups",
+    "concepts": "inbound/outbound",
+    "handsOn": "Allow only required ports; test",
+    "deliverable": "SG ruleset",
+    "review": "SG purpose",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 41,
+    "topic": "VPC",
+    "concepts": "CIDR, subnet, route table",
+    "handsOn": "Inspect/map VPC traffic",
+    "deliverable": "VPC diagram",
+    "review": "Subnet",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 42,
+    "topic": "Public/private",
+    "concepts": "IGW, NAT, routes",
+    "handsOn": "Draw public/private architecture",
+    "deliverable": "Network diagram",
+    "review": "Public vs private",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 43,
+    "topic": "AWS networking",
+    "concepts": "routes, DNS, ports",
+    "handsOn": "Troubleshoot blocked access",
+    "deliverable": "Network runbook",
+    "review": "EC2 connectivity",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 44,
+    "topic": "EBS",
+    "concepts": "volumes, mount, snapshots",
+    "handsOn": "Attach/mount test volume",
+    "deliverable": "EBS lab",
+    "review": "EBS use",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 45,
+    "topic": "S3",
+    "concepts": "bucket, objects, permissions",
+    "handsOn": "Store artifact/log",
+    "deliverable": "S3 lab",
+    "review": "Object storage",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 46,
+    "topic": "CloudWatch",
+    "concepts": "metrics, logs, alarms",
+    "handsOn": "Read logs and create basic alarm",
+    "deliverable": "CW lab",
+    "review": "Metrics vs logs",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 47,
+    "topic": "ALB",
+    "concepts": "load balancer, target group",
+    "handsOn": "Map traffic path; create test ALB if budget permits",
+    "deliverable": "ALB diagram",
+    "review": "Why ALB",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 48,
+    "topic": "ECR",
+    "concepts": "repositories, tags",
+    "handsOn": "Push capstone image",
+    "deliverable": "ECR image",
+    "review": "ECR workflow",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 49,
+    "topic": "AWS CLI",
+    "concepts": "profiles, commands",
+    "handsOn": "Configure CLI safely; query resources",
+    "deliverable": "CLI notes",
+    "review": "Why CLI",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 50,
+    "topic": "Cost control",
+    "concepts": "budgets, cleanup",
+    "handsOn": "Create cleanup checklist; remove unused resources",
+    "deliverable": "Cost checklist",
+    "review": "Bill prevention",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 51,
+    "topic": "AWS architecture",
+    "concepts": "3-tier concepts",
+    "handsOn": "Design capstone AWS architecture",
+    "deliverable": "AWS architecture v1",
+    "review": "Explain design",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 52,
+    "topic": "AWS troubleshooting",
+    "concepts": "SG, route, DNS, services",
+    "handsOn": "Fix 5 connectivity issues",
+    "deliverable": "AWS runbook",
+    "review": "Timeout/502/DNS",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 53,
+    "topic": "EC2 bootstrap",
+    "concepts": "user data",
+    "handsOn": "Launch with startup script",
+    "deliverable": "Bootstrap lab",
+    "review": "Why bootstrap",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 54,
+    "topic": "Deployment patterns",
+    "concepts": "rolling, immutable",
+    "handsOn": "Document deployment strategy",
+    "deliverable": "Deployment doc",
+    "review": "Immutable infra",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 55,
+    "topic": "IAM troubleshooting",
+    "concepts": "access denied, policy evaluation",
+    "handsOn": "Diagnose permission failures",
+    "deliverable": "IAM runbook",
+    "review": "Policy evaluation",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 56,
+    "topic": "VPC troubleshooting",
+    "concepts": "routes, SG, DNS",
+    "handsOn": "Break/restore connectivity",
+    "deliverable": "Network incident",
+    "review": "Route vs SG",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 57,
+    "topic": "CloudWatch incident",
+    "concepts": "logs, metrics, alarms",
+    "handsOn": "Investigate high CPU incident",
+    "deliverable": "Incident report",
+    "review": "Metric troubleshooting",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 58,
+    "topic": "AWS revision",
+    "concepts": "EC2/IAM/VPC/ECR/S3",
+    "handsOn": "Rebuild small lab",
+    "deliverable": "AWS checklist",
+    "review": "Rapid fire",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 59,
+    "topic": "AWS capstone",
+    "concepts": "EC2 + ECR",
+    "handsOn": "Deploy capstone from ECR",
+    "deliverable": "Capstone AWS v1",
+    "review": "Image lifecycle",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 60,
+    "topic": "AWS capstone",
+    "concepts": "security + monitoring",
+    "handsOn": "Tighten SG; add CloudWatch",
+    "deliverable": "Capstone AWS v2",
+    "review": "Security review",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 61,
+    "topic": "AWS interview lab",
+    "concepts": "architecture",
+    "handsOn": "Whiteboard 3 architectures",
+    "deliverable": "Architecture notes",
+    "review": "Private subnet",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 62,
+    "topic": "AWS incident lab",
+    "concepts": "realistic failures",
+    "handsOn": "Resolve 5 broken scenarios",
+    "deliverable": "Incident pack",
+    "review": "502/timeout/DNS",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 63,
+    "topic": "AWS repeatability",
+    "concepts": "rebuild",
+    "handsOn": "Destroy/recreate test setup safely",
+    "deliverable": "Rebuild checklist",
+    "review": "Why IaC",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 64,
+    "topic": "AWS assessment",
+    "concepts": "full revision",
+    "handsOn": "Deploy small app without tutorial",
+    "deliverable": "Assessment",
+    "review": "45-min interview",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 65,
+    "topic": "AWS checkpoint",
+    "concepts": "project explanation",
+    "handsOn": "Record AWS architecture explanation",
+    "deliverable": "Recording/notes",
+    "review": "Fix gaps",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 66,
+    "topic": "Terraform basics",
+    "concepts": "IaC, provider, resource",
+    "handsOn": "Install; init test project",
+    "deliverable": "Terraform repo",
+    "review": "Why IaC",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path"
+    ]
+  },
+  {
+    "num": 67,
+    "topic": "Terraform workflow",
+    "concepts": "init/plan/apply/destroy",
+    "handsOn": "Create safe test resource",
+    "deliverable": "Terraform lab",
+    "review": "Plan vs apply",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path"
+    ]
+  },
+  {
+    "num": 68,
+    "topic": "Variables",
+    "concepts": "variables, tfvars",
+    "handsOn": "Parameterize region/tags",
+    "deliverable": "Terraform v2",
+    "review": "Why variables",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path",
+      "AWS EC2 Getting Started"
+    ]
+  },
+  {
+    "num": 69,
+    "topic": "Outputs",
+    "concepts": "outputs, references",
+    "handsOn": "Output resource IDs/IP",
+    "deliverable": "Outputs file",
+    "review": "Dependencies",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path",
+      "AWS EC2 Getting Started"
+    ]
+  },
+  {
+    "num": 70,
+    "topic": "State",
+    "concepts": "state, drift",
+    "handsOn": "Inspect state; understand drift",
+    "deliverable": "State notes",
+    "review": "Why state",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path",
+      "AWS EC2 Getting Started"
+    ]
+  },
+  {
+    "num": 71,
+    "topic": "AWS provider",
+    "concepts": "provider/resources",
+    "handsOn": "Create AWS resources with variables",
+    "deliverable": "AWS TF lab",
+    "review": "Provider vs resource",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 72,
+    "topic": "VPC as code",
+    "concepts": "VPC/subnet/routes",
+    "handsOn": "Provision test VPC",
+    "deliverable": "VPC code",
+    "review": "Read network code",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path",
+      "AWS EC2 Getting Started"
+    ]
+  },
+  {
+    "num": 73,
+    "topic": "EC2 as code",
+    "concepts": "instance, SG",
+    "handsOn": "Provision EC2 + SG",
+    "deliverable": "EC2 code",
+    "review": "Dependency graph",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path",
+      "AWS EC2 Getting Started"
+    ]
+  },
+  {
+    "num": 74,
+    "topic": "Modules",
+    "concepts": "module structure",
+    "handsOn": "Convert network/compute into module",
+    "deliverable": "Module #1",
+    "review": "Why modules",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path",
+      "AWS EC2 Getting Started"
+    ]
+  },
+  {
+    "num": 75,
+    "topic": "Remote state",
+    "concepts": "backend, locking concept",
+    "handsOn": "Design remote-state approach",
+    "deliverable": "State architecture",
+    "review": "Local vs remote",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path",
+      "AWS EC2 Getting Started"
+    ]
+  },
+  {
+    "num": 76,
+    "topic": "Terraform troubleshooting",
+    "concepts": "syntax, plan, state",
+    "handsOn": "Introduce/fix errors",
+    "deliverable": "TF runbook",
+    "review": "Debug Terraform",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path"
+    ]
+  },
+  {
+    "num": 77,
+    "topic": "Terraform + Git",
+    "concepts": "versioning IaC",
+    "handsOn": "Review diff before apply",
+    "deliverable": "IaC PR",
+    "review": "IaC review",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs"
+    ]
+  },
+  {
+    "num": 78,
+    "topic": "Terraform + CI",
+    "concepts": "fmt, validate, plan",
+    "handsOn": "Run TF checks in Actions",
+    "deliverable": "IaC pipeline",
+    "review": "Plan in CI",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 79,
+    "topic": "Terraform capstone",
+    "concepts": "provision project infra",
+    "handsOn": "Build capstone infrastructure",
+    "deliverable": "TF capstone",
+    "review": "Dependencies",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path"
+    ]
+  },
+  {
+    "num": 80,
+    "topic": "Terraform assessment",
+    "concepts": "full revision",
+    "handsOn": "Recreate test env from code",
+    "deliverable": "Assessment",
+    "review": "Interview drill",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path"
+    ]
+  },
+  {
+    "num": 81,
+    "topic": "K8s architecture",
+    "concepts": "cluster, control plane, nodes",
+    "handsOn": "Run kind/minikube; inspect cluster",
+    "deliverable": "K8s notes",
+    "review": "Why K8s",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 82,
+    "topic": "Pods",
+    "concepts": "pod lifecycle",
+    "handsOn": "Deploy nginx pod; inspect logs",
+    "deliverable": "pod.yaml",
+    "review": "Pod vs container",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 83,
+    "topic": "Deployments",
+    "concepts": "replicas, rollout",
+    "handsOn": "Create/scale deployment",
+    "deliverable": "deployment.yaml",
+    "review": "Why Deployment",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 84,
+    "topic": "Services",
+    "concepts": "ClusterIP, NodePort",
+    "handsOn": "Expose deployment",
+    "deliverable": "service.yaml",
+    "review": "Service purpose",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 85,
+    "topic": "ConfigMap",
+    "concepts": "configuration",
+    "handsOn": "Inject env config",
+    "deliverable": "configmap.yaml",
+    "review": "ConfigMap vs Secret",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 86,
+    "topic": "Secrets",
+    "concepts": "secret handling",
+    "handsOn": "Create test secret; inject it",
+    "deliverable": "secret.yaml",
+    "review": "Secret basics",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 87,
+    "topic": "Namespaces",
+    "concepts": "isolation",
+    "handsOn": "Create namespace; deploy",
+    "deliverable": "namespace lab",
+    "review": "Why namespace",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 88,
+    "topic": "Probes",
+    "concepts": "liveness/readiness",
+    "handsOn": "Add probes; simulate failure",
+    "deliverable": "probe lab",
+    "review": "Liveness vs readiness",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 89,
+    "topic": "Resources",
+    "concepts": "requests/limits",
+    "handsOn": "Set resources; observe",
+    "deliverable": "resources.yaml",
+    "review": "Requests vs limits",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 90,
+    "topic": "Ingress",
+    "concepts": "routing",
+    "handsOn": "Configure ingress locally",
+    "deliverable": "ingress.yaml",
+    "review": "Ingress vs Service",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 91,
+    "topic": "Rollouts",
+    "concepts": "rolling update/rollback",
+    "handsOn": "Update image and rollback",
+    "deliverable": "rollout lab",
+    "review": "Rollback",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 92,
+    "topic": "K8s troubleshooting",
+    "concepts": "describe/logs/exec",
+    "handsOn": "Break pod; diagnose CrashLoopBackOff",
+    "deliverable": "K8s runbook",
+    "review": "CrashLoopBackOff",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 93,
+    "topic": "K8s networking",
+    "concepts": "pod/service DNS",
+    "handsOn": "Test service communication",
+    "deliverable": "Network lab",
+    "review": "K8s DNS",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 94,
+    "topic": "Storage",
+    "concepts": "PV/PVC",
+    "handsOn": "Create test PVC",
+    "deliverable": "Storage lab",
+    "review": "Persistent storage",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 95,
+    "topic": "Selectors",
+    "concepts": "labels/selectors",
+    "handsOn": "Break selector; fix service",
+    "deliverable": "Selector lab",
+    "review": "How Service finds pods",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 96,
+    "topic": "RBAC",
+    "concepts": "roles, service accounts",
+    "handsOn": "Create read-only example",
+    "deliverable": "RBAC notes",
+    "review": "Least privilege",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials",
+      "Docker Get Started"
+    ]
+  },
+  {
+    "num": 97,
+    "topic": "Helm",
+    "concepts": "charts, values, templates",
+    "handsOn": "Install/inspect simple chart",
+    "deliverable": "Helm notes",
+    "review": "Why Helm",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 98,
+    "topic": "K8s images",
+    "concepts": "image pull workflow",
+    "handsOn": "Deploy own image where supported",
+    "deliverable": "Image deployment",
+    "review": "ImagePullBackOff",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 99,
+    "topic": "K8s capstone",
+    "concepts": "deployment + service",
+    "handsOn": "Deploy app locally",
+    "deliverable": "K8s v1",
+    "review": "Explain manifests",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 100,
+    "topic": "K8s CI/CD",
+    "concepts": "tag→deploy",
+    "handsOn": "Design Actions deployment flow",
+    "deliverable": "CD design",
+    "review": "Avoid latest tag",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 101,
+    "topic": "Monitoring prep",
+    "concepts": "metrics/logs",
+    "handsOn": "Choose capstone metrics",
+    "deliverable": "Monitoring plan",
+    "review": "Golden signals",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started"
+    ]
+  },
+  {
+    "num": 102,
+    "topic": "K8s incident lab",
+    "concepts": "DNS/service/probe/resources",
+    "handsOn": "Solve 5 broken manifests",
+    "deliverable": "Incident notes",
+    "review": "Service unreachable",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 103,
+    "topic": "K8s interview lab",
+    "concepts": "architecture",
+    "handsOn": "Draw cluster from memory",
+    "deliverable": "Architecture",
+    "review": "Pod lifecycle",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 104,
+    "topic": "K8s assessment",
+    "concepts": "full revision",
+    "handsOn": "Deploy from blank YAML",
+    "deliverable": "Assessment",
+    "review": "45-min interview",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 105,
+    "topic": "K8s checkpoint",
+    "concepts": "project explanation",
+    "handsOn": "Record 10-min explanation",
+    "deliverable": "Recording",
+    "review": "Fix gaps",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 106,
+    "topic": "Observability",
+    "concepts": "metrics/logs/traces, SLI/SLO",
+    "handsOn": "Define 5 capstone metrics",
+    "deliverable": "Monitoring checklist",
+    "review": "Metric vs log",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started"
+    ]
+  },
+  {
+    "num": 107,
+    "topic": "Prometheus",
+    "concepts": "scrape model, targets",
+    "handsOn": "Run Prometheus; inspect targets",
+    "deliverable": "Prometheus lab",
+    "review": "How scraping works",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started"
+    ]
+  },
+  {
+    "num": 108,
+    "topic": "Exporters",
+    "concepts": "node exporter concept",
+    "handsOn": "Expose system metrics",
+    "deliverable": "Metrics notes",
+    "review": "Exporter purpose",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started",
+      "Kubernetes Basics"
+    ]
+  },
+  {
+    "num": 109,
+    "topic": "Grafana",
+    "concepts": "datasource, dashboard",
+    "handsOn": "Connect Prometheus; build dashboard",
+    "deliverable": "Grafana dashboard",
+    "review": "Dashboard design",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started"
+    ]
+  },
+  {
+    "num": 110,
+    "topic": "Alerting",
+    "concepts": "rules, thresholds",
+    "handsOn": "Create basic CPU/service alert",
+    "deliverable": "Alert rule",
+    "review": "Noisy vs useful",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started",
+      "Kubernetes Basics"
+    ]
+  },
+  {
+    "num": 111,
+    "topic": "Container monitoring",
+    "concepts": "container metrics",
+    "handsOn": "Monitor workload",
+    "deliverable": "Container dashboard",
+    "review": "What to monitor",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started"
+    ]
+  },
+  {
+    "num": 112,
+    "topic": "Logs",
+    "concepts": "logging architecture",
+    "handsOn": "Collect/search app logs",
+    "deliverable": "Log runbook",
+    "review": "Incident investigation",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 113,
+    "topic": "Incident simulation",
+    "concepts": "failure scenarios",
+    "handsOn": "Break app; diagnose with metrics/logs",
+    "deliverable": "Incident report",
+    "review": "Troubleshooting flow",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 114,
+    "topic": "Monitoring integration",
+    "concepts": "capstone observability",
+    "handsOn": "Add dashboard + alerts",
+    "deliverable": "Monitoring v1",
+    "review": "Project demo",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started"
+    ]
+  },
+  {
+    "num": 115,
+    "topic": "Monitoring assessment",
+    "concepts": "revision",
+    "handsOn": "Run complete incident",
+    "deliverable": "Assessment",
+    "review": "Monitoring drill",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started"
+    ]
+  },
+  {
+    "num": 116,
+    "topic": "Capstone architecture",
+    "concepts": "final design",
+    "handsOn": "Finalize architecture + README",
+    "deliverable": "Architecture v2",
+    "review": "Tradeoffs",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "Terraform Tutorials"
+    ]
+  },
+  {
+    "num": 117,
+    "topic": "Capstone IaC",
+    "concepts": "Terraform",
+    "handsOn": "Provision AWS infrastructure",
+    "deliverable": "TF final",
+    "review": "State",
+    "resources": [
+      "Terraform Tutorials",
+      "Terraform AWS Path"
+    ]
+  },
+  {
+    "num": 118,
+    "topic": "Capstone CI",
+    "concepts": "Actions",
+    "handsOn": "Build/test pipeline",
+    "deliverable": "CI final",
+    "review": "Pipeline",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 119,
+    "topic": "Capstone registry",
+    "concepts": "ECR",
+    "handsOn": "Build/push versioned image",
+    "deliverable": "Registry final",
+    "review": "Tagging",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "Terraform Tutorials"
+    ]
+  },
+  {
+    "num": 120,
+    "topic": "Capstone deployment",
+    "concepts": "Kubernetes",
+    "handsOn": "Deploy with manifests/Helm",
+    "deliverable": "K8s final",
+    "review": "Deployment",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "Terraform Tutorials"
+    ]
+  },
+  {
+    "num": 121,
+    "topic": "Capstone monitoring",
+    "concepts": "Prometheus/Grafana",
+    "handsOn": "Dashboard + alerts",
+    "deliverable": "Monitoring final",
+    "review": "Observability",
+    "resources": [
+      "Prometheus Getting Started",
+      "Grafana Getting Started"
+    ]
+  },
+  {
+    "num": 122,
+    "topic": "Capstone security",
+    "concepts": "IAM/SG/secrets",
+    "handsOn": "Remove hard-coded secrets; tighten access",
+    "deliverable": "Security checklist",
+    "review": "Least privilege",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "Terraform Tutorials"
+    ]
+  },
+  {
+    "num": 123,
+    "topic": "Capstone failure tests",
+    "concepts": "troubleshooting",
+    "handsOn": "Simulate bad image/port/pod/CPU",
+    "deliverable": "Incident pack",
+    "review": "5 stories",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "Terraform Tutorials"
+    ]
+  },
+  {
+    "num": 124,
+    "topic": "Capstone documentation",
+    "concepts": "README",
+    "handsOn": "Architecture/setup/pipeline/troubleshooting",
+    "deliverable": "README final",
+    "review": "10-min explanation",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "Terraform Tutorials"
+    ]
+  },
+  {
+    "num": 125,
+    "topic": "Capstone demo",
+    "concepts": "full run",
+    "handsOn": "Code push→CI→image→deploy→monitor",
+    "deliverable": "Portfolio project",
+    "review": "Final project interview",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started",
+      "Terraform Tutorials"
+    ]
+  },
+  {
+    "num": 126,
+    "topic": "Resume",
+    "concepts": "experience + project",
+    "handsOn": "Rewrite resume around impact",
+    "deliverable": "Resume v1",
+    "review": "2-min intro",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 127,
+    "topic": "GitHub",
+    "concepts": "repo quality",
+    "handsOn": "Clean repos; pin project",
+    "deliverable": "GitHub portfolio",
+    "review": "Credibility",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs"
+    ]
+  },
+  {
+    "num": 128,
+    "topic": "LinkedIn",
+    "concepts": "positioning",
+    "handsOn": "Update headline/about/project",
+    "deliverable": "LinkedIn profile",
+    "review": "Recruiter pitch",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 129,
+    "topic": "Linux interview",
+    "concepts": "troubleshooting",
+    "handsOn": "20 Q + 3 incidents",
+    "deliverable": "Linux Q&A",
+    "review": "Mock",
+    "resources": [
+      "Linux Journey",
+      "Killercoda Linux"
+    ]
+  },
+  {
+    "num": 130,
+    "topic": "Docker/Git interview",
+    "concepts": "containers/workflow",
+    "handsOn": "20 Q + practical commands",
+    "deliverable": "Docker/Git Q&A",
+    "review": "Mock",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs"
+    ]
+  },
+  {
+    "num": 131,
+    "topic": "CI/CD interview",
+    "concepts": "pipeline design",
+    "handsOn": "Draw 3 pipelines; debug",
+    "deliverable": "CI/CD Q&A",
+    "review": "Mock",
+    "resources": [
+      "GitHub Actions Quickstart",
+      "GitHub Actions Docs"
+    ]
+  },
+  {
+    "num": 132,
+    "topic": "AWS/Terraform interview",
+    "concepts": "cloud/IaC",
+    "handsOn": "Architecture + incidents",
+    "deliverable": "Cloud Q&A",
+    "review": "Mock",
+    "resources": [
+      "AWS EC2 Getting Started",
+      "AWS IAM Getting Started"
+    ]
+  },
+  {
+    "num": 133,
+    "topic": "K8s interview",
+    "concepts": "K8s troubleshooting",
+    "handsOn": "20 Q + 3 incidents",
+    "deliverable": "K8s Q&A",
+    "review": "Mock",
+    "resources": [
+      "Kubernetes Basics",
+      "Kubernetes Tutorials"
+    ]
+  },
+  {
+    "num": 134,
+    "topic": "Full mock",
+    "concepts": "HR + technical + project",
+    "handsOn": "60–90 min mock; record gaps",
+    "deliverable": "Scorecard",
+    "review": "Fix top 5",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs",
+      "GitHub Actions Quickstart"
+    ]
+  },
+  {
+    "num": 135,
+    "topic": "Switch readiness",
+    "concepts": "final revision",
+    "handsOn": "Finalize job package + application tracker",
+    "deliverable": "Ready-to-apply package",
+    "review": "Final assessment",
+    "resources": [
+      "Pro Git Book",
+      "GitHub Docs",
+      "GitHub Actions Quickstart"
+    ]
+  }
+]
