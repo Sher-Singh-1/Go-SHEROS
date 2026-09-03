@@ -19,7 +19,7 @@ export function ConversationView({
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <div className="flex flex-1 flex-col rounded-2xl border border-border bg-surface">
+    <div className="glass-card flex flex-1 flex-col rounded-2xl border border-border bg-surface">
       <div className="flex-1 overflow-y-auto p-5">
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-center">

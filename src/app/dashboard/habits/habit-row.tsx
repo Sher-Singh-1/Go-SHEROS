@@ -18,7 +18,7 @@ export function HabitRow({ habit }: { habit: HabitRowData }) {
   const doneToday = habit.last7[habit.last7.length - 1];
 
   return (
-    <div className={clsx("group flex items-center gap-4 rounded-xl border border-border bg-surface px-4 py-3", pending && "opacity-60")}>
+    <div className={clsx("group glass-card flex items-center gap-4 rounded-xl border border-border bg-surface px-4 py-3", pending && "opacity-60")}>
       <button
         onClick={(e) => {
           if (!doneToday) {

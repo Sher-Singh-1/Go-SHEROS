@@ -1,13 +1,14 @@
 import { requireOnboardedUser } from "@/lib/auth/current-user";
 import { countRemainingBackupCodes } from "@/lib/auth/backup-codes";
 import { ThemeToggle, ReducedMotionToggle } from "@/components/ui/theme-toggle";
+import { PageHeader } from "@/components/ui/page-header";
 import { ProfileForm, PreferencesForm, PasswordForm } from "./settings-forms";
 import { ExportDataButton, DeleteAccountButton } from "./data-actions";
 import { TwoFactorSection } from "./two-factor-section";
 
 function Section({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
-    <section className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6">
+    <section className="glass-card flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6">
       <div>
         <h2 className="font-display text-base font-semibold">{title}</h2>
         {description && <p className="mt-0.5 text-sm text-ink-soft">{description}</p>}
@@ -23,7 +24,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Settings</h1>
+      <PageHeader title="Settings" subtitle="Customize your experience." />
 
       <Section title="Two-factor authentication" description="Every login on this account requires your authenticator app.">
         <TwoFactorSection remainingCodes={remainingCodes} />

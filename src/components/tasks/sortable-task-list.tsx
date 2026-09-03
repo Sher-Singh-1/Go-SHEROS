@@ -52,7 +52,21 @@ function SortableRow({ task }: { task: TaskRowData }) {
 }
 
 export function SortableTaskList({ initialTasks }: { initialTasks: TaskRowData[] }) {
+  // initialTasks is a fresh array every server render, so a plain useState
+  // initializer only captures it once — without resyncing here, a status
+  // change (e.g. completing a task) persists to the DB but never appears
+  // until a full page reload, since router.refresh() alone can't reach this
+  // local state. Adjusting state during render (React's documented pattern
+  // for this, in place of an effect) avoids the extra render an effect
+  // would cost.
+  const signature = initialTasks.map((t) => `${t.id}:${t.status}:${t.priority}`).join(",");
   const [tasks, setTasks] = useState(initialTasks);
+  const [prevSignature, setPrevSignature] = useState(signature);
+  if (signature !== prevSignature) {
+    setPrevSignature(signature);
+    setTasks(initialTasks);
+  }
+
   const [, startTransition] = useTransition();
   const router = useRouter();
   const sensors = useSensors(

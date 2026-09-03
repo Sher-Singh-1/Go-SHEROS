@@ -3,6 +3,7 @@ import { requireOnboardedUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db/client";
 import { FocusTimer } from "@/components/focus/focus-timer";
 import { formatFocusDuration } from "@/lib/analytics/metrics";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default async function FocusPage() {
   const user = await requireOnboardedUser();
@@ -24,10 +25,7 @@ export default async function FocusPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-2xl font-semibold">Focus</h1>
-        <p className="text-sm text-ink-soft">Pick a task, pick a mode, and go.</p>
-      </div>
+      <PageHeader title="Focus" subtitle="Eliminate distractions. Deep work." />
 
       <FocusTimer tasks={tasks} />
 
@@ -38,7 +36,7 @@ export default async function FocusPage() {
         ) : (
           <div className="flex flex-col gap-2">
             {recentSessions.map((s) => (
-              <div key={s.id} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 text-sm">
+              <div key={s.id} className="glass-card flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 text-sm">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{s.task.title}</p>
                   <p className="text-xs text-ink-faint">{format(s.startedAt, "MMM d, h:mm a")} · {s.mode.toLowerCase()}</p>
