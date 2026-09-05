@@ -13,6 +13,7 @@ import {
 } from "date-fns";
 import { requireOnboardedUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db/client";
+import { materializeRecurringTasks } from "@/lib/tasks/recurrence";
 import { clsx } from "clsx";
 import { PageHeader } from "@/components/ui/page-header";
 
@@ -30,6 +31,8 @@ export default async function CalendarPage({
   const gridStart = startOfWeek(startOfMonth(anchor));
   const gridEnd = endOfWeek(endOfMonth(anchor));
   const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
+
+  await materializeRecurringTasks(user.id, gridEnd);
 
   const tasks = await prisma.task.findMany({
     where: { userId: user.id, date: { gte: gridStart, lte: gridEnd } },

@@ -50,6 +50,8 @@ export async function updateNotificationSettings(_prev: FormState, formData: For
   const user = await requireUser();
   const reminderEnabled = formData.get("reminderEnabled") === "on";
   const timeOfDay = String(formData.get("timeOfDay") ?? "08:00");
+  const taskDueEnabled = formData.get("taskDueEnabled") === "on";
+  const marketingOptIn = formData.get("marketingOptIn") === "on";
   const quietHoursStartRaw = formData.get("quietHoursStart");
   const quietHoursEndRaw = formData.get("quietHoursEnd");
   const quietHoursStart = quietHoursStartRaw ? Number(quietHoursStartRaw) : null;
@@ -68,7 +70,19 @@ export async function updateNotificationSettings(_prev: FormState, formData: For
     });
   }
 
-  await prisma.userPreferences.update({ where: { userId: user.id }, data: { quietHoursStart, quietHoursEnd } });
+  const existingTaskDue = await prisma.reminderRule.findFirst({ where: { userId: user.id, type: "TASK_DUE" } });
+  if (existingTaskDue) {
+    await prisma.reminderRule.update({ where: { id: existingTaskDue.id }, data: { enabled: taskDueEnabled } });
+  } else {
+    await prisma.reminderRule.create({
+      data: { userId: user.id, type: "TASK_DUE", channel: "IN_APP", enabled: taskDueEnabled, offsetMinutes: 15 },
+    });
+  }
+
+  await prisma.userPreferences.update({
+    where: { userId: user.id },
+    data: { quietHoursStart, quietHoursEnd, marketingOptIn },
+  });
 
   revalidatePath("/dashboard/settings");
   return { info: "Saved." };

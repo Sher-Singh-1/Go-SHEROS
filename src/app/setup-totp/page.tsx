@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth/current-user";
-import { buildProvisioningQrCode } from "@/lib/auth/totp";
+import { buildProvisioningQrCode, ensureTotpSecret } from "@/lib/auth/totp";
 import { TotpSetupView } from "./totp-setup-view";
 
 export default async function SetupTotpPage() {
@@ -9,14 +9,14 @@ export default async function SetupTotpPage() {
   if (user.totpEnabled) {
     redirect(user.profile?.onboardedAt ? "/dashboard" : "/onboarding");
   }
-  if (!user.totpSecret) {
-    // Shouldn't happen — signup and login both provision a secret before
-    // routing here — but fail safe rather than crash on a null QR.
-    redirect("/login");
-  }
 
-  const { qrDataUrl } = await buildProvisioningQrCode(user.email, user.totpSecret);
-  const manualKey = user.totpSecret.match(/.{1,4}/g)?.join(" ") ?? user.totpSecret;
+  // Two-factor is optional and this page is revisitable at any time (from
+  // signup, or later from Settings), so provision a secret on the fly if one
+  // isn't already sitting on the account.
+  const secret = await ensureTotpSecret(user.id, user.totpSecret);
+
+  const { qrDataUrl } = await buildProvisioningQrCode(user.email, secret);
+  const manualKey = secret.match(/.{1,4}/g)?.join(" ") ?? secret;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-bg px-4 py-12">

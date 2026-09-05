@@ -14,11 +14,14 @@ export type FormState = { error?: string; info?: string } | undefined;
 
 export async function startSignup(_prev: FormState, formData: FormData): Promise<FormState> {
   const parsed = signupSchema.safeParse({
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
     email: formData.get("email"),
     password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
-  const { email, password } = parsed.data;
+  const { firstName, lastName, email, password } = parsed.data;
 
   const limit = rateLimit(`signup:${email}`, 5, 15 * 60 * 1000);
   if (!limit.ok) return { error: "Too many attempts. Try again in a few minutes." };
@@ -27,9 +30,15 @@ export async function startSignup(_prev: FormState, formData: FormData): Promise
   if (existing) return { error: "An account with this email already exists. Try logging in instead." };
 
   const passwordHash = await hashPassword(password);
-  const user = await prisma.user.create({ data: { email, passwordHash } });
+  const user = await prisma.user.create({ data: { email, firstName, lastName, passwordHash } });
   await ensureTotpSecret(user.id, null);
 
+  const displayName = `${firstName} ${lastName}`.trim();
+  await prisma.profile.upsert({
+    where: { userId: user.id },
+    create: { userId: user.id, displayName },
+    update: {},
+  });
   await prisma.userPreferences.upsert({ where: { userId: user.id }, create: { userId: user.id }, update: {} });
   await prisma.streak.upsert({ where: { userId: user.id }, create: { userId: user.id }, update: {} });
 
@@ -55,11 +64,11 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
   if (!valid) return { error: "Incorrect email or password." };
 
   if (!user.totpEnabled) {
-    // No second factor set up yet — sign them in and the dashboard gate will
-    // route them through setup before they can go any further.
-    await ensureTotpSecret(user.id, user.totpSecret);
+    // Two-factor is optional — this account never turned it on (or skipped
+    // setup), so log straight in instead of detouring through /setup-totp.
     await createSession({ userId: user.id, email: user.email });
-    redirect("/setup-totp");
+    const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
+    redirect(profile?.onboardedAt ? "/dashboard" : "/onboarding");
   }
 
   await setPendingUser(PENDING_2FA_COOKIE, user.id);

@@ -10,6 +10,16 @@ import { LinkListEditor } from "./link-list-editor";
 import { parseResourceLinks } from "@/lib/tasks/resource-links";
 import type { TaskRowData } from "./task-row";
 
+const WEEKDAYS = [
+  { value: 0, label: "S" },
+  { value: 1, label: "M" },
+  { value: 2, label: "T" },
+  { value: 3, label: "W" },
+  { value: 4, label: "T" },
+  { value: 5, label: "F" },
+  { value: 6, label: "S" },
+] as const;
+
 export function TaskEditModal({ task, onClose }: { task: TaskRowData; onClose: () => void }) {
   const [error, setError] = useState<string | undefined>();
   const [pending, startTransition] = useTransition();
@@ -66,6 +76,32 @@ export function TaskEditModal({ task, onClose }: { task: TaskRowData; onClose: (
           <Field label="Category" htmlFor="edit-category">
             <TextInput id="edit-category" name="category" defaultValue={task.category ?? ""} maxLength={60} />
           </Field>
+
+          {task.seriesId ? (
+            <p className="text-xs text-ink-faint">Part of a repeating series.</p>
+          ) : (
+            <div>
+              <p className="mb-1.5 text-xs font-medium text-ink-soft">Repeat on</p>
+              <div className="flex gap-1.5">
+                {WEEKDAYS.map((day) => (
+                  <label
+                    key={day.value}
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-border-strong text-xs font-medium text-ink-soft transition-colors has-[:checked]:border-accent has-[:checked]:bg-accent has-[:checked]:text-accent-ink"
+                  >
+                    <input
+                      type="checkbox"
+                      name="recurrenceDays"
+                      value={day.value}
+                      defaultChecked={task.recurrenceDays?.includes(day.value)}
+                      className="sr-only"
+                    />
+                    {day.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
           <LinkListEditor
             initialLinks={parseResourceLinks(task.notes)
               .filter((l): l is { name: string; url: string } => Boolean(l.url))}

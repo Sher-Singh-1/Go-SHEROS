@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import Image from "next/image";
-import { confirmTotpSetup, type ConfirmTotpState } from "./actions";
+import { confirmTotpSetup, skipTotpSetup, type ConfirmTotpState } from "./actions";
 import { Field, TextInput, FormError } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +10,7 @@ const initialState: ConfirmTotpState = { status: "idle" };
 
 export function TotpSetupView({ qrDataUrl, manualKey }: { qrDataUrl: string; manualKey: string }) {
   const [state, formAction, pending] = useActionState(confirmTotpSetup, initialState);
+  const [skipping, startSkip] = useTransition();
 
   if (state.status === "success") {
     return <BackupCodesView codes={state.backupCodes} nextPath={state.nextPath} />;
@@ -20,8 +21,8 @@ export function TotpSetupView({ qrDataUrl, manualKey }: { qrDataUrl: string; man
       <div>
         <h1 className="text-xl font-semibold">Set up your authenticator app</h1>
         <p className="mt-1.5 text-sm text-ink-soft">
-          Scan this with Google Authenticator, Authy, 1Password, or any TOTP app. This replaces email for login — no
-          inbox needed.
+          Optional — scan this with Microsoft Authenticator, Google Authenticator, Authy, or any TOTP app to add extra
+          security to your Go Sheros account. You can skip this and turn it on later from Settings.
         </p>
       </div>
 
@@ -55,6 +56,15 @@ export function TotpSetupView({ qrDataUrl, manualKey }: { qrDataUrl: string; man
           {pending ? "Confirming…" : "Confirm & enable"}
         </Button>
       </form>
+
+      <button
+        type="button"
+        disabled={skipping}
+        onClick={() => startSkip(() => skipTotpSetup())}
+        className="text-center text-sm font-medium text-ink-soft hover:text-ink disabled:opacity-50"
+      >
+        {skipping ? "Skipping…" : "Skip for now"}
+      </button>
     </div>
   );
 }

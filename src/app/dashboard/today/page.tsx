@@ -2,6 +2,7 @@ import Link from "next/link";
 import { addDays, endOfDay, format, isToday, parseISO, startOfDay } from "date-fns";
 import { requireOnboardedUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db/client";
+import { materializeRecurringTasks } from "@/lib/tasks/recurrence";
 import { QuickAdd } from "@/components/tasks/quick-add";
 import { TaskBoard } from "@/components/tasks/task-board";
 import { PageHeader } from "@/components/ui/page-header";
@@ -14,6 +15,8 @@ export default async function TodayPage({
   const user = await requireOnboardedUser();
   const { date: dateParam } = await searchParams;
   const date = dateParam ? parseISO(dateParam) : new Date();
+
+  await materializeRecurringTasks(user.id, date);
 
   const tasks = await prisma.task.findMany({
     where: { userId: user.id, date: { gte: startOfDay(date), lte: endOfDay(date) } },

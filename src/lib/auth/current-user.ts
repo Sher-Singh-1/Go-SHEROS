@@ -24,7 +24,6 @@ export async function requireUser() {
 
 export async function requireOnboardedUser() {
   const user = await requireUser();
-  if (!user.totpEnabled) redirect("/setup-totp");
   if (!user.profile?.onboardedAt) redirect("/onboarding");
   return user;
 }

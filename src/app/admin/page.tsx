@@ -4,6 +4,7 @@ import { getAllUsersUsage, getDailySiteUsage } from "@/lib/analytics/admin-metri
 import { formatFocusDuration } from "@/lib/analytics/metrics";
 import { SiteUsageChart } from "@/components/admin/site-usage-chart";
 import { UserUsageChart } from "@/components/admin/user-usage-chart";
+import { BroadcastForm } from "./broadcast-form";
 import { logout } from "@/app/(auth)/actions";
 
 export const metadata = { title: "Admin" };
@@ -67,6 +68,8 @@ export default async function AdminPage() {
             <UserUsageChart data={usageBars} />
           </div>
         )}
+
+        <BroadcastForm />
 
         <div className="rounded-2xl border border-border bg-surface">
           <p className="border-b border-border px-5 py-4 text-sm font-medium">All users</p>

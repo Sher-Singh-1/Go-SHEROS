@@ -51,8 +51,15 @@ export async function updateTask(taskId: string, _prev: TaskFormState, formData:
     category: formData.get("category") || undefined,
     estimatedMinutes: formData.get("estimatedMinutes") || undefined,
     notes: formData.get("notes") || undefined,
+    recurrenceDays: formData.getAll("recurrenceDays"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the form." };
+
+  const existing = await prisma.task.findUnique({ where: { id: taskId, userId: user.id }, select: { seriesId: true } });
+  if (!existing) return { error: "Couldn't find that task." };
+  // Generated instances of a series can't themselves become a new root —
+  // only the original recurring task can carry recurrenceDays.
+  const recurrenceDays = existing.seriesId ? [] : parsed.data.recurrenceDays;
 
   const result = await prisma.task.updateMany({
     where: { id: taskId, userId: user.id },
@@ -65,6 +72,7 @@ export async function updateTask(taskId: string, _prev: TaskFormState, formData:
       category: parsed.data.category ?? null,
       estimatedMinutes: parsed.data.estimatedMinutes ?? null,
       notes: parsed.data.notes ?? null,
+      recurrenceDays,
     },
   });
   if (result.count === 0) return { error: "Couldn't find that task." };

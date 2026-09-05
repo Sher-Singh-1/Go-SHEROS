@@ -67,16 +67,22 @@ export function PreferencesForm({
 export function NotificationsForm({
   reminderEnabled,
   timeOfDay,
+  taskDueEnabled,
+  marketingOptIn,
   quietHoursStart,
   quietHoursEnd,
 }: {
   reminderEnabled: boolean;
   timeOfDay: string;
+  taskDueEnabled: boolean;
+  marketingOptIn: boolean;
   quietHoursStart: number | null;
   quietHoursEnd: number | null;
 }) {
   const [state, formAction, pending] = useActionState<FormState, FormData>(updateNotificationSettings, undefined);
   const [enabled, setEnabled] = useState(reminderEnabled);
+  const [taskDue, setTaskDue] = useState(taskDueEnabled);
+  const [marketing, setMarketing] = useState(marketingOptIn);
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
@@ -91,6 +97,25 @@ export function NotificationsForm({
       <Field label="Reminder time" htmlFor="timeOfDay" hint="24h">
         <TextInput id="timeOfDay" name="timeOfDay" type="time" defaultValue={timeOfDay} className={!enabled ? "opacity-50" : undefined} />
       </Field>
+
+      <div className="flex items-center justify-between border-t border-border pt-4">
+        <div>
+          <p className="text-sm font-medium">Task due reminders</p>
+          <p className="text-xs text-ink-soft">Notify me shortly before a task&apos;s due time.</p>
+        </div>
+        <input type="hidden" name="taskDueEnabled" value={taskDue ? "on" : "off"} />
+        <Toggle checked={taskDue} onChange={setTaskDue} label="Task due reminders" />
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium">Product updates &amp; announcements</p>
+          <p className="text-xs text-ink-soft">Occasional news about new Go Sheros features.</p>
+        </div>
+        <input type="hidden" name="marketingOptIn" value={marketing ? "on" : "off"} />
+        <Toggle checked={marketing} onChange={setMarketing} label="Product updates & announcements" />
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
         <Field label="Quiet hours start" htmlFor="quietHoursStart" hint="24h, optional">
           <TextInput id="quietHoursStart" name="quietHoursStart" type="number" min={0} max={23} defaultValue={quietHoursStart ?? ""} />

@@ -23,6 +23,8 @@ export type TaskRowData = {
   estimatedMinutes: number | null;
   description?: string | null;
   notes?: string | null;
+  recurrenceDays?: number[];
+  seriesId?: string | null;
 };
 
 const PRIORITY_DOT: Record<Priority, string> = {
@@ -47,6 +49,7 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
   const isOverdue = !isCompleted && task.status !== "SKIPPED" && isBefore(startOfDay(task.date), startOfDay(new Date()));
   const resourceLinks = parseResourceLinks(task.notes);
   const hasDetails = Boolean(task.description) || resourceLinks.length > 0;
+  const isRecurring = Boolean(task.seriesId) || (task.recurrenceDays?.length ?? 0) > 0;
 
   function toggle(e: React.MouseEvent<HTMLButtonElement>) {
     const willComplete = !isCompleted;
@@ -96,6 +99,13 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
           {task.startTime && <span className="font-mono">{formatTaskTime(task.startTime, timeFormat)}</span>}
           {task.estimatedMinutes && <span>{task.estimatedMinutes}m</span>}
           {task.category && <span>{task.category}</span>}
+          {isRecurring && (
+            <span className="flex items-center gap-0.5" title="Repeating task">
+              <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={1.7}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8h11a4 4 0 0 1 4 4v1M20 16H9a4 4 0 0 1-4-4v-1M7 5 4 8l3 3M17 19l3-3-3-3" />
+              </svg>
+            </span>
+          )}
           {isCompleted && <span className="rounded-full bg-teal-soft px-1.5 py-0.5 font-medium text-teal">Done</span>}
           {isOverdue && <span className="font-medium text-danger">Overdue</span>}
           {hasDetails && <span className="font-medium text-teal">{expanded ? "Hide details" : "Details"}</span>}

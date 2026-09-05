@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db/client";
 import { verifyTotpToken } from "@/lib/auth/totp";
@@ -31,4 +32,10 @@ export async function confirmTotpSetup(_prev: ConfirmTotpState, formData: FormDa
 
   const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
   return { status: "success", backupCodes, nextPath: profile?.onboardedAt ? "/dashboard" : "/onboarding" };
+}
+
+export async function skipTotpSetup() {
+  const user = await requireUser();
+  const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
+  redirect(profile?.onboardedAt ? "/dashboard" : "/onboarding");
 }
