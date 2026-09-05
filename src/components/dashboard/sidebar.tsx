@@ -20,7 +20,7 @@ export function Sidebar({ displayName, email }: { displayName: string; email: st
           </span>
           <span className="font-display text-base font-semibold">Go Sheros</span>
         </Link>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <NotificationBell />
           <QuickThemeToggle />
         </div>
