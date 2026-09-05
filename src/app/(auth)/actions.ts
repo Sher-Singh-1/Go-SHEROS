@@ -9,6 +9,23 @@ import { createSession, destroySession } from "@/lib/auth/session";
 import { rateLimit } from "@/lib/auth/rate-limit";
 import { PENDING_2FA_COOKIE, setPendingUser, getPendingUser, clearPendingUser } from "@/lib/auth/pending";
 import { signupSchema, loginSchema, sixDigitCodeSchema, resetWithBackupCodeSchema } from "@/lib/validation/auth";
+import { notifyUser } from "@/lib/notifications/service";
+
+// Sent once, right after signup, so a brand-new notification bell isn't
+// empty and the feature is immediately visible (in-app and as a push, once
+// the user turns that on) — not tied to any admin broadcast.
+const WELCOME_NOTIFICATIONS = [
+  {
+    title: "Welcome to Go Sheros 🎉",
+    body: "Your first goal is one tap away — let's turn it into a plan you'll actually stick to.",
+    actionUrl: "/dashboard/goals/new",
+  },
+  {
+    title: "Try the AI Coach",
+    body: "Stuck on where to start? The AI Coach breaks any goal into a day-by-day plan in seconds.",
+    actionUrl: "/dashboard/ai",
+  },
+] as const;
 
 export type FormState = { error?: string; info?: string } | undefined;
 
@@ -41,6 +58,10 @@ export async function startSignup(_prev: FormState, formData: FormData): Promise
   });
   await prisma.userPreferences.upsert({ where: { userId: user.id }, create: { userId: user.id }, update: {} });
   await prisma.streak.upsert({ where: { userId: user.id }, create: { userId: user.id }, update: {} });
+
+  for (const notification of WELCOME_NOTIFICATIONS) {
+    await notifyUser(user.id, { ...notification, type: "MARKETING" });
+  }
 
   await createSession({ userId: user.id, email: user.email });
   redirect("/setup-totp");
