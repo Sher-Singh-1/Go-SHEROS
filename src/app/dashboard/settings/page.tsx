@@ -7,6 +7,7 @@ import { ProfileForm, PreferencesForm, NotificationsForm, PasswordForm } from ".
 import { ExportDataButton, DeleteAccountButton } from "./data-actions";
 import { TwoFactorSection } from "./two-factor-section";
 import { GeneralToggles } from "./general-toggles";
+import { PushToggle } from "./push-toggle";
 import { SettingsTabs, type SettingsTab } from "./settings-tabs";
 
 function Section({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
@@ -23,9 +24,10 @@ function Section({ title, description, children }: { title: string; description?
 
 export default async function SettingsPage() {
   const user = await requireOnboardedUser();
-  const [remainingCodes, dailyReminder] = await Promise.all([
+  const [remainingCodes, dailyReminder, taskDueReminder] = await Promise.all([
     countRemainingBackupCodes(user.id),
     prisma.reminderRule.findFirst({ where: { userId: user.id, type: "DAILY_PLANNING" } }),
+    prisma.reminderRule.findFirst({ where: { userId: user.id, type: "TASK_DUE" } }),
   ]);
 
   const tabs: SettingsTab[] = [
@@ -42,13 +44,18 @@ export default async function SettingsPage() {
       id: "notifications",
       label: "Notifications",
       content: (
-        <Section title="Notifications" description="A daily nudge, and quiet hours it won't interrupt.">
-          <NotificationsForm
-            reminderEnabled={dailyReminder?.enabled ?? false}
-            timeOfDay={dailyReminder?.timeOfDay ?? "08:00"}
-            quietHoursStart={user.preferences?.quietHoursStart ?? null}
-            quietHoursEnd={user.preferences?.quietHoursEnd ?? null}
-          />
+        <Section title="Notifications" description="A daily nudge, task-due alerts, and quiet hours they won't interrupt.">
+          <div className="flex flex-col gap-6">
+            <PushToggle />
+            <NotificationsForm
+              reminderEnabled={dailyReminder?.enabled ?? false}
+              timeOfDay={dailyReminder?.timeOfDay ?? "08:00"}
+              taskDueEnabled={taskDueReminder?.enabled ?? false}
+              marketingOptIn={user.preferences?.marketingOptIn ?? true}
+              quietHoursStart={user.preferences?.quietHoursStart ?? null}
+              quietHoursEnd={user.preferences?.quietHoursEnd ?? null}
+            />
+          </div>
         </Section>
       ),
     },
@@ -88,8 +95,15 @@ export default async function SettingsPage() {
       label: "Account",
       content: (
         <div className="flex flex-col gap-8">
-          <Section title="Two-factor authentication" description="Every login on this account requires your authenticator app.">
-            <TwoFactorSection remainingCodes={remainingCodes} />
+          <Section
+            title="Two-factor authentication"
+            description={
+              user.totpEnabled
+                ? "Every login on this account requires your authenticator app."
+                : "Optional — add an authenticator app for extra login security."
+            }
+          >
+            <TwoFactorSection enabled={user.totpEnabled} remainingCodes={remainingCodes} />
           </Section>
           <Section title="Profile">
             <ProfileForm displayName={user.profile?.displayName ?? ""} profession={user.profile?.profession ?? "OTHER"} />

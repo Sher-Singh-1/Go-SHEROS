@@ -53,6 +53,8 @@ async function main() {
       data: {
         id: sourceUser.id,
         email: sourceUser.email,
+        firstName: sourceUser.firstName,
+        lastName: sourceUser.lastName,
         passwordHash: sourceUser.passwordHash,
         totpSecret: sourceUser.totpSecret,
         totpEnabled: sourceUser.totpEnabled,

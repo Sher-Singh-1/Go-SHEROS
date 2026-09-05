@@ -11,27 +11,44 @@ datasource db {
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
+  firstName    String
+  lastName     String
   passwordHash String?
   totpSecret   String?
   totpEnabled  Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  profile       Profile?
-  preferences   UserPreferences?
-  goals         Goal[]
-  tasks         Task[]
-  habits        Habit[]
-  taskSessions  TaskSession[]
-  streak        Streak?
-  achievements  Achievement[]
-  conversations AIConversation[]
-  reminderRules ReminderRule[]
-  notifications Notification[]
-  backupCodes   BackupCode[]
-  loginEvents   LoginEvent[]
+  profile           Profile?
+  preferences       UserPreferences?
+  goals             Goal[]
+  tasks             Task[]
+  habits            Habit[]
+  taskSessions      TaskSession[]
+  streak            Streak?
+  achievements      Achievement[]
+  conversations     AIConversation[]
+  reminderRules     ReminderRule[]
+  notifications     Notification[]
+  pushSubscriptions PushSubscription[]
+  backupCodes       BackupCode[]
+  loginEvents       LoginEvent[]
 
   @@map("users")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
 }
 
 model LoginEvent {
@@ -97,6 +114,7 @@ model UserPreferences {
   reducedMotion       Boolean  @default(false)
   quietHoursStart     Int?
   quietHoursEnd       Int?
+  marketingOptIn      Boolean  @default(true)
   updatedAt           DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -172,7 +190,9 @@ model Task {
   category         String?
   status           TaskStatus @default(NOT_STARTED)
   estimatedMinutes Int?
-  recurrenceRule   String?
+  recurrenceDays   Int[]      @default([])
+  seriesId         String?
+  remindedAt       DateTime?
   notes            String?
   tags             String[]   @default([])
   order            Int        @default(0)
@@ -187,6 +207,7 @@ model Task {
 
   @@index([userId, date])
   @@index([goalId])
+  @@index([userId, seriesId, date])
   @@map("tasks")
 }
 
@@ -389,15 +410,23 @@ enum NotificationChannel {
 }
 
 model Notification {
-  id        String    @id @default(cuid())
+  id        String           @id @default(cuid())
   userId    String
+  type      NotificationType @default(SYSTEM)
   title     String
   body      String
+  actionUrl String?
   readAt    DateTime?
-  createdAt DateTime  @default(now())
+  createdAt DateTime         @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, readAt])
   @@map("notifications")
+}
+
+enum NotificationType {
+  TASK
+  SYSTEM
+  MARKETING
 }

@@ -13,6 +13,7 @@ export const createTaskSchema = z.object({
   estimatedMinutes: z.coerce.number().int().min(1).max(600).optional(),
   notes: z.string().trim().max(2000).optional(),
   goalId: z.string().optional(),
+  recurrenceDays: z.array(z.coerce.number().int().min(0).max(6)).optional().default([]),
 });
 
 export const updateTaskStatusSchema = z.object({

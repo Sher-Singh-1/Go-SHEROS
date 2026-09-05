@@ -2,11 +2,28 @@
 
 import { useState, useTransition } from "react";
 import { regenerateBackupCodes } from "./actions";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 
-export function TwoFactorSection({ remainingCodes }: { remainingCodes: number }) {
+export function TwoFactorSection({ enabled, remainingCodes }: { enabled: boolean; remainingCodes: number }) {
   const [codes, setCodes] = useState<string[] | null>(null);
   const [pending, startTransition] = useTransition();
+
+  if (!enabled) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between text-sm">
+          <span>Authenticator app</span>
+          <span className="rounded-full bg-surface-3 px-2.5 py-0.5 text-xs font-medium text-ink-faint">Not enabled</span>
+        </div>
+        <p className="text-xs text-ink-soft">
+          Optional, but recommended — add an authenticator app for a second layer of security when you log in.
+        </p>
+        <ButtonLink href="/setup-totp" size="sm" className="self-start">
+          Set up two-factor
+        </ButtonLink>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">

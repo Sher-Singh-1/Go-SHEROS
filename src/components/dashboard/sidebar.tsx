@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import { logout } from "@/app/(auth)/actions";
 import { QuickThemeToggle } from "@/components/ui/theme-toggle";
+import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { NAV, NavIcon as Icon } from "@/components/dashboard/nav-items";
 
 export function Sidebar({ displayName, email }: { displayName: string; email: string }) {
@@ -19,7 +20,10 @@ export function Sidebar({ displayName, email }: { displayName: string; email: st
           </span>
           <span className="font-display text-base font-semibold">Go Sheros</span>
         </Link>
-        <QuickThemeToggle />
+        <div className="flex items-center gap-1">
+          <NotificationBell />
+          <QuickThemeToggle />
+        </div>
       </div>
 
       <nav className="flex flex-1 flex-col gap-0.5 px-3">

@@ -20,10 +20,20 @@ export const backupCodeSchema = z
   .toUpperCase()
   .regex(/^[0-9A-Z]{4}-[0-9A-Z]{4}$/, "Enter a backup code in the form XXXX-XXXX.");
 
-export const signupSchema = z.object({
-  email: emailSchema,
-  password: passwordSchema,
-});
+export const nameSchema = z.string().trim().min(1, "This field is required.").max(60);
+
+export const signupSchema = z
+  .object({
+    firstName: nameSchema,
+    lastName: nameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match.",
+    path: ["confirmPassword"],
+  });
 
 export const loginSchema = z.object({
   email: emailSchema,
