@@ -57,37 +57,37 @@ export async function generateDraftPlan(_prev: PlanFormState, formData: FormData
   });
   const plan = validatePlanAgainstCapacity(rawPlan, data.hoursPerDay);
 
+  const serializedPlan: SerializedPlan = {
+    warnings: plan.warnings,
+    milestones: plan.milestones.map((m) => ({ title: m.title, targetDate: m.targetDate.toISOString(), order: m.order })),
+    tasks: plan.tasks.map((t) => ({
+      title: t.title,
+      date: t.date.toISOString(),
+      startTime: t.startTime,
+      estimatedMinutes: t.estimatedMinutes,
+      milestoneIndex: t.milestoneIndex,
+    })),
+  };
+
+  if (formData.get("mode") === "direct") {
+    const user = await requireUser();
+    const goal = await createGoalFromPlan(user.id, data.goalTitle, data.startDate, data.endDate, serializedPlan);
+    redirect(`/dashboard/goals/${goal.id}`);
+  }
+
   return {
     status: "drafted",
     goalTitle: data.goalTitle,
     startDate: data.startDate.toISOString(),
     endDate: data.endDate.toISOString(),
-    plan: {
-      warnings: plan.warnings,
-      milestones: plan.milestones.map((m) => ({ title: m.title, targetDate: m.targetDate.toISOString(), order: m.order })),
-      tasks: plan.tasks.map((t) => ({
-        title: t.title,
-        date: t.date.toISOString(),
-        startTime: t.startTime,
-        estimatedMinutes: t.estimatedMinutes,
-        milestoneIndex: t.milestoneIndex,
-      })),
-    },
+    plan: serializedPlan,
   };
 }
 
-export async function acceptDraftPlan(formData: FormData) {
-  const user = await requireUser();
-
-  const goalTitle = String(formData.get("goalTitle") ?? "");
-  const startDate = new Date(String(formData.get("startDate")));
-  const endDate = new Date(String(formData.get("endDate")));
-  const planJson = String(formData.get("planJson") ?? "{}");
-  const plan = JSON.parse(planJson) as SerializedPlan;
-
-  const goal = await prisma.$transaction(async (tx) => {
+async function createGoalFromPlan(userId: string, goalTitle: string, startDate: Date, endDate: Date, plan: SerializedPlan) {
+  return prisma.$transaction(async (tx) => {
     const createdGoal = await tx.goal.create({
-      data: { userId: user.id, title: goalTitle, startDate, endDate },
+      data: { userId, title: goalTitle, startDate, endDate },
     });
 
     const createdMilestones = await Promise.all(
@@ -101,7 +101,7 @@ export async function acceptDraftPlan(formData: FormData) {
     if (plan.tasks.length > 0) {
       await tx.task.createMany({
         data: plan.tasks.map((t) => ({
-          userId: user.id,
+          userId,
           goalId: createdGoal.id,
           milestoneId: createdMilestones[t.milestoneIndex]?.id,
           title: t.title,
@@ -114,6 +114,18 @@ export async function acceptDraftPlan(formData: FormData) {
 
     return createdGoal;
   });
+}
+
+export async function acceptDraftPlan(formData: FormData) {
+  const user = await requireUser();
+
+  const goalTitle = String(formData.get("goalTitle") ?? "");
+  const startDate = new Date(String(formData.get("startDate")));
+  const endDate = new Date(String(formData.get("endDate")));
+  const planJson = String(formData.get("planJson") ?? "{}");
+  const plan = JSON.parse(planJson) as SerializedPlan;
+
+  const goal = await createGoalFromPlan(user.id, goalTitle, startDate, endDate, plan);
 
   redirect(`/dashboard/goals/${goal.id}`);
 }

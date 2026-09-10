@@ -55,6 +55,7 @@ function GoalWizardAttempt({
 }) {
   const [state, formAction, pending] = useActionState(generateDraftPlan, initialState);
   const [selectedDays, setSelectedDays] = useState<number[]>([0, 1, 2, 3, 4, 5, 6]);
+  const [mode, setMode] = useState<"review" | "direct">("review");
 
   function toggleDay(day: number) {
     setSelectedDays((prev) => (prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort()));
@@ -165,14 +166,46 @@ function GoalWizardAttempt({
             <option value="advanced">Advanced — sharpening existing skill</option>
           </select>
         </Field>
+        <Field label="Before it's added" htmlFor="mode">
+          <input type="hidden" name="mode" value={mode} />
+          <div id="mode" className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setMode("review")}
+              className={clsx(
+                "rounded-lg border px-3.5 py-2.5 text-left text-sm transition-colors",
+                mode === "review" ? "border-accent bg-accent-soft text-accent-ink" : "border-border-strong text-ink-soft hover:border-border"
+              )}
+            >
+              <span className="block font-medium">Let me review first</span>
+              <span className="block text-xs opacity-80">See and edit every task before it&apos;s added</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("direct")}
+              className={clsx(
+                "rounded-lg border px-3.5 py-2.5 text-left text-sm transition-colors",
+                mode === "direct" ? "border-accent bg-accent-soft text-accent-ink" : "border-border-strong text-ink-soft hover:border-border"
+              )}
+            >
+              <span className="block font-medium">Just go</span>
+              <span className="block text-xs opacity-80">Skip review, add it straight to my plan</span>
+            </button>
+          </div>
+        </Field>
         <FormError message={state.status === "error" ? state.error : undefined} />
         <Button type="submit" disabled={pending} size="lg" className="mt-1">
-          {pending ? "Building your plan…" : "Draft my plan"}
+          {pending ? (mode === "direct" ? "Creating your goal…" : "Building your plan…") : mode === "direct" ? "Create goal" : "Draft my plan"}
         </Button>
       </form>
     </div>
   );
 }
+
+type EditableTask = SerializedPlan["tasks"][number] & { _key: number };
+type EditableMilestone = SerializedPlan["milestones"][number] & { _key: number };
+
+let nextKey = 0;
 
 function PlanReview({
   goalTitle,
@@ -187,8 +220,39 @@ function PlanReview({
   plan: SerializedPlan;
   onStartOver: () => void;
 }) {
-  const [tasks, setTasks] = useState(plan.tasks);
+  const [milestones, setMilestones] = useState<EditableMilestone[]>(() => plan.milestones.map((m, i) => ({ ...m, _key: i })));
+  const [tasks, setTasks] = useState<EditableTask[]>(() => plan.tasks.map((t, i) => ({ ...t, _key: i })));
   const byDay = groupByDay(tasks);
+
+  function updateTask(key: number, patch: Partial<EditableTask>) {
+    setTasks((prev) => prev.map((t) => (t._key === key ? { ...t, ...patch } : t)));
+  }
+
+  function addTask(day: string) {
+    setTasks((prev) => [
+      ...prev,
+      {
+        _key: -(++nextKey),
+        title: "New task",
+        date: `${day}T00:00:00.000Z`,
+        startTime: "09:00",
+        estimatedMinutes: 30,
+        milestoneIndex: 0,
+      },
+    ]);
+  }
+
+  const cleanPlan: SerializedPlan = {
+    warnings: plan.warnings,
+    milestones: milestones.map((m) => ({ title: m.title, targetDate: m.targetDate, order: m.order })),
+    tasks: tasks.map((t) => ({
+      title: t.title,
+      date: t.date,
+      startTime: t.startTime,
+      estimatedMinutes: t.estimatedMinutes,
+      milestoneIndex: t.milestoneIndex,
+    })),
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -196,8 +260,8 @@ function PlanReview({
         <div>
           <h1 className="text-xl font-semibold">Here&apos;s the plan for &ldquo;{goalTitle}&rdquo;</h1>
           <p className="mt-1.5 text-sm text-ink-soft">
-            Review it, remove anything that doesn&apos;t fit, then accept. Only the next couple of weeks are
-            scheduled — later weeks generate as you go, based on your actual pace.
+            Everything below is editable — change titles, dates, times, or remove/add tasks — then accept. Only
+            the next couple of weeks are scheduled; later weeks generate as you go, based on your actual pace.
           </p>
         </div>
         <button type="button" onClick={onStartOver} className="flex-none text-xs font-medium text-ink-faint hover:text-ink">
@@ -218,10 +282,24 @@ function PlanReview({
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">Milestones</p>
         <div className="flex flex-col gap-2">
-          {plan.milestones.map((m, i) => (
-            <div key={i} className="flex items-center justify-between rounded-lg border border-border bg-surface px-3.5 py-2.5 text-sm">
-              <span>{m.title}</span>
-              <span className="font-mono text-xs text-ink-faint">{format(new Date(m.targetDate), "MMM d")}</span>
+          {milestones.map((m) => (
+            <div key={m._key} className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm">
+              <input
+                type="text"
+                value={m.title}
+                onChange={(e) => setMilestones((prev) => prev.map((x) => (x._key === m._key ? { ...x, title: e.target.value } : x)))}
+                className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+              />
+              <input
+                type="date"
+                value={m.targetDate.slice(0, 10)}
+                onChange={(e) =>
+                  setMilestones((prev) =>
+                    prev.map((x) => (x._key === m._key ? { ...x, targetDate: `${e.target.value}T00:00:00.000Z` } : x))
+                  )
+                }
+                className="flex-none bg-transparent font-mono text-xs text-ink-faint outline-none"
+              />
             </div>
           ))}
         </div>
@@ -232,21 +310,48 @@ function PlanReview({
         <div className="flex flex-col gap-4">
           {byDay.map(([day, dayTasks]) => (
             <div key={day}>
-              <p className="mb-1.5 text-xs font-medium text-ink-soft">{format(new Date(day), "EEEE, MMM d")}</p>
+              <div className="mb-1.5 flex items-center justify-between">
+                <p className="text-xs font-medium text-ink-soft">{format(new Date(day), "EEEE, MMM d")}</p>
+                <button type="button" onClick={() => addTask(day)} className="text-xs font-medium text-teal hover:underline">
+                  + Add task
+                </button>
+              </div>
               <div className="flex flex-col gap-1.5">
                 {dayTasks.map((t) => (
-                  <div key={t.title + t.date} className="flex items-center justify-between rounded-lg border border-border bg-surface px-3.5 py-2 text-sm">
-                    <span className="truncate">{t.title}</span>
-                    <div className="flex flex-none items-center gap-3">
-                      <span className="font-mono text-xs text-ink-faint">{t.startTime} · {t.estimatedMinutes}m</span>
-                      <button
-                        type="button"
-                        onClick={() => setTasks((prev) => prev.filter((x) => x !== t))}
-                        className="text-xs font-medium text-danger hover:underline"
-                      >
-                        Remove
-                      </button>
-                    </div>
+                  <div key={t._key} className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm">
+                    <input
+                      type="text"
+                      value={t.title}
+                      onChange={(e) => updateTask(t._key, { title: e.target.value })}
+                      className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+                    />
+                    <input
+                      type="date"
+                      value={t.date.slice(0, 10)}
+                      onChange={(e) => updateTask(t._key, { date: `${e.target.value}T00:00:00.000Z` })}
+                      className="flex-none bg-transparent font-mono text-xs text-ink-faint outline-none"
+                    />
+                    <input
+                      type="time"
+                      value={t.startTime}
+                      onChange={(e) => updateTask(t._key, { startTime: e.target.value })}
+                      className="flex-none bg-transparent font-mono text-xs text-ink-faint outline-none"
+                    />
+                    <input
+                      type="number"
+                      min={5}
+                      step={5}
+                      value={t.estimatedMinutes}
+                      onChange={(e) => updateTask(t._key, { estimatedMinutes: Number(e.target.value) })}
+                      className="w-12 flex-none bg-transparent font-mono text-xs text-ink-faint outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setTasks((prev) => prev.filter((x) => x._key !== t._key))}
+                      className="flex-none text-xs font-medium text-danger hover:underline"
+                    >
+                      Remove
+                    </button>
                   </div>
                 ))}
               </div>
@@ -259,15 +364,15 @@ function PlanReview({
         <input type="hidden" name="goalTitle" value={goalTitle} />
         <input type="hidden" name="startDate" value={startDate} />
         <input type="hidden" name="endDate" value={endDate} />
-        <input type="hidden" name="planJson" value={JSON.stringify({ ...plan, tasks })} />
+        <input type="hidden" name="planJson" value={JSON.stringify(cleanPlan)} />
         <Button type="submit" size="lg">Accept &amp; add to my plan</Button>
       </form>
     </div>
   );
 }
 
-function groupByDay(tasks: SerializedPlan["tasks"]) {
-  const map = new Map<string, SerializedPlan["tasks"]>();
+function groupByDay(tasks: EditableTask[]) {
+  const map = new Map<string, EditableTask[]>();
   for (const t of tasks) {
     const key = t.date.slice(0, 10);
     map.set(key, [...(map.get(key) ?? []), t]);
