@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 import { formatDistanceToNowStrict } from "date-fns";
@@ -22,7 +23,9 @@ export function NotificationBell() {
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [pending, startTransition] = useTransition();
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [panelPos, setPanelPos] = useState<{ top: number; right: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   async function refresh() {
@@ -47,10 +50,33 @@ export function NotificationBell() {
   useEffect(() => {
     if (!open) return;
     function onClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
+      const target = e.target as Node;
+      if (buttonRef.current?.contains(target)) return;
+      if (panelRef.current?.contains(target)) return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    function place() {
+      const btn = buttonRef.current;
+      if (!btn) return;
+      const rect = btn.getBoundingClientRect();
+      setPanelPos({
+        top: rect.bottom + 8,
+        right: Math.max(8, window.innerWidth - rect.right),
+      });
+    }
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
   }, [open]);
 
   function openItem(item: NotificationItem) {
@@ -74,8 +100,9 @@ export function NotificationBell() {
   }
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Notifications"
@@ -93,49 +120,56 @@ export function NotificationBell() {
         )}
       </button>
 
-      {open && (
-        <div className="glass-card absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-border bg-surface shadow-[0_8px_30px_-8px_rgba(0,0,0,0.3)]">
-          <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <p className="text-sm font-semibold">Notifications</p>
-            {unreadCount > 0 && (
-              <button
-                type="button"
-                onClick={markAll}
-                disabled={pending}
-                className="text-xs font-medium text-teal hover:underline disabled:opacity-50"
-              >
-                Mark all read
-              </button>
-            )}
-          </div>
-          <div className="max-h-96 overflow-y-auto">
-            {items.length === 0 ? (
-              <p className="px-4 py-8 text-center text-sm text-ink-faint">Nothing yet.</p>
-            ) : (
-              items.map((item) => (
+      {open &&
+        panelPos &&
+        createPortal(
+          <div
+            ref={panelRef}
+            style={{ top: panelPos.top, right: panelPos.right }}
+            className="glass-card fixed z-[100] w-80 max-w-[calc(100vw-1rem)] rounded-2xl border border-border bg-surface shadow-[0_8px_30px_-8px_rgba(0,0,0,0.3)]"
+          >
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+              <p className="text-sm font-semibold">Notifications</p>
+              {unreadCount > 0 && (
                 <button
-                  key={item.id}
                   type="button"
-                  onClick={() => openItem(item)}
-                  className={clsx(
-                    "flex w-full flex-col gap-0.5 border-b border-border px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-surface-2",
-                    !item.readAt && "bg-accent-soft/40"
-                  )}
+                  onClick={markAll}
+                  disabled={pending}
+                  className="text-xs font-medium text-teal hover:underline disabled:opacity-50"
                 >
-                  <div className="flex items-center gap-2">
-                    {!item.readAt && <span className="h-1.5 w-1.5 flex-none rounded-full bg-accent" />}
-                    <p className="min-w-0 flex-1 truncate text-sm font-medium">{item.title}</p>
-                  </div>
-                  <p className="line-clamp-2 text-xs text-ink-soft">{item.body}</p>
-                  <p className="text-[11px] text-ink-faint">
-                    {formatDistanceToNowStrict(new Date(item.createdAt), { addSuffix: true })}
-                  </p>
+                  Mark all read
                 </button>
-              ))
-            )}
-          </div>
-        </div>
-      )}
+              )}
+            </div>
+            <div className="max-h-96 overflow-y-auto">
+              {items.length === 0 ? (
+                <p className="px-4 py-8 text-center text-sm text-ink-faint">Nothing yet.</p>
+              ) : (
+                items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => openItem(item)}
+                    className={clsx(
+                      "flex w-full flex-col gap-0.5 border-b border-border px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-surface-2",
+                      !item.readAt && "bg-accent-soft/40"
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      {!item.readAt && <span className="h-1.5 w-1.5 flex-none rounded-full bg-accent" />}
+                      <p className="min-w-0 flex-1 truncate text-sm font-medium">{item.title}</p>
+                    </div>
+                    <p className="line-clamp-2 text-xs text-ink-soft">{item.body}</p>
+                    <p className="text-[11px] text-ink-faint">
+                      {formatDistanceToNowStrict(new Date(item.createdAt), { addSuffix: true })}
+                    </p>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

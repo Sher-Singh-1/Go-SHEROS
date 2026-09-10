@@ -119,7 +119,7 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
         title={task.priority === "HIGH" ? "High priority" : "Mark as high priority"}
         className={clsx(
           "flex-none rounded-md p-1.5 transition-colors",
-          task.priority === "HIGH" ? "text-warning" : "text-ink-faint opacity-0 hover:text-ink group-hover:opacity-100"
+          task.priority === "HIGH" ? "text-warning" : "text-ink-faint opacity-100 hover:text-ink md:opacity-0 md:group-hover:opacity-100"
         )}
       >
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill={task.priority === "HIGH" ? "currentColor" : "none"} stroke="currentColor" strokeWidth={1.7}>
@@ -130,7 +130,7 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
       <button
         onClick={() => setEditing(true)}
         aria-label="Edit task"
-        className="flex-none rounded-md p-1.5 text-ink-faint opacity-0 transition-opacity hover:bg-surface-2 hover:text-ink group-hover:opacity-100"
+        className="flex-none rounded-md p-1.5 text-ink-faint opacity-100 transition-opacity hover:bg-surface-2 hover:text-ink md:opacity-0 md:group-hover:opacity-100"
       >
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.7}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
@@ -141,7 +141,7 @@ export function TaskRow({ task, showDelete = true }: { task: TaskRowData; showDe
         <button
           onClick={() => startTransition(async () => { await deleteTask(task.id); router.refresh(); })}
           aria-label="Delete task"
-          className="flex-none rounded-md p-1.5 text-ink-faint opacity-0 transition-opacity hover:bg-danger-soft hover:text-danger group-hover:opacity-100"
+          className="flex-none rounded-md p-1.5 text-ink-faint opacity-100 transition-opacity hover:bg-danger-soft hover:text-danger md:opacity-0 md:group-hover:opacity-100"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.7}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
