@@ -4,8 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import { logout } from "@/app/(auth)/actions";
-import { QuickThemeToggle } from "@/components/ui/theme-toggle";
-import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { NAV, NavIcon as Icon } from "@/components/dashboard/nav-items";
 
 export function Sidebar({ displayName, email }: { displayName: string; email: string }) {
@@ -13,17 +11,13 @@ export function Sidebar({ displayName, email }: { displayName: string; email: st
 
   return (
     <aside className="sticky top-0 hidden h-screen w-64 flex-none flex-col overflow-y-auto border-r border-border bg-surface md:flex">
-      <div className="flex items-center justify-between px-6 py-6">
+      <div className="flex items-center px-6 py-6">
         <Link href="/dashboard" className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-gradient-to-br from-accent to-[#a8341f] font-display text-sm font-bold text-[#fff8ec]">
             GS
           </span>
           <span className="font-display text-base font-semibold">Go Sheros</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <NotificationBell />
-          <QuickThemeToggle />
-        </div>
       </div>
 
       <nav className="flex flex-1 flex-col gap-0.5 px-3">

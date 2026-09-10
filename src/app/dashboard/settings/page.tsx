@@ -128,6 +128,7 @@ export default async function SettingsPage() {
           <div className="flex flex-col gap-2 text-sm text-ink-soft">
             <p>An AI planning partner that turns goals into a paced, daily plan — and keeps you honest about whether you did it.</p>
             <p className="text-ink-faint">Version 0.1.0</p>
+            <p className="text-ink-faint">Made with care by Sher Singh</p>
           </div>
         </Section>
       ),

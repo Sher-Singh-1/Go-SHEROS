@@ -120,6 +120,20 @@ export type CoachContext = {
   currentStreak: number;
 };
 
+const APP_GUIDE = `
+Go Sheros is a productivity app with these sections (left sidebar on desktop, bottom tab bar on mobile):
+- Dashboard: daily overview — today's tasks, streak, quick stats.
+- Today: the day's task list; add, complete, star (high priority), edit, or delete tasks; tasks can repeat on chosen days of the week.
+- Goals: set a goal with a timeframe and hours/day; the AI planner breaks it into milestones and daily tasks the user reviews before committing.
+- Calendar: month/week view of all scheduled tasks.
+- Habits: recurring habit tracking separate from one-off tasks.
+- Focus: a focus-timer mode for single-tasking.
+- Analytics: charts on completion rate, streaks, and time spent by category.
+- AI Coach (this chat): goal planning and productivity Q&A.
+- Settings: profile, password, optional 2FA, notification/email preferences, data export & account deletion, and an About tab with app version and credits.
+Notifications: a bell icon (top-right on desktop, top bar on mobile) shows in-app notifications with a badge for unread count.
+`.trim();
+
 export async function askCoach(userMessage: string, context: CoachContext, history: { role: "user" | "assistant"; content: string }[]) {
   if (!isRealAIConfigured()) {
     return ruleBasedCoachReply(userMessage, context);
@@ -130,10 +144,15 @@ export async function askCoach(userMessage: string, context: CoachContext, histo
       model: MODEL,
       max_tokens: 600,
       system:
-        "You are the Go Sheros productivity coach: warm, direct, and practical — never generic motivational filler. " +
-        `The user currently has ${context.todayTaskCount} tasks today (${context.overdueCount} overdue), ` +
+        "You are the Go Sheros AI Coach: a warm, direct assistant that helps with productivity coaching, goal planning, " +
+        "AND general conversation or questions about the app itself. You are not limited to productivity topics — " +
+        "answer general knowledge questions, casual chat, and anything else the user brings up naturally and helpfully. " +
+        "When asked how the app works or what a feature does, answer using this app guide:\n" +
+        APP_GUIDE + "\n\n" +
+        `The user's current data: ${context.todayTaskCount} tasks today (${context.overdueCount} overdue), ` +
         `a ${context.currentStreak}-day streak, and active goals: ${context.activeGoalTitles.join(", ") || "none yet"}. ` +
-        "Ground every answer in these real numbers. Keep replies under 120 words.",
+        "Use these real numbers when the conversation is about their productivity — never invent numbers. " +
+        "Avoid generic motivational filler. Keep replies under 150 words unless the user asks for more detail.",
       messages: [...history, { role: "user", content: userMessage }],
     });
     const text = response.content.find((b) => b.type === "text");
@@ -147,6 +166,9 @@ export async function askCoach(userMessage: string, context: CoachContext, histo
 function ruleBasedCoachReply(message: string, context: CoachContext) {
   const lower = message.toLowerCase();
 
+  if (lower.includes("what is this app") || lower.includes("what does this app") || lower.includes("how does this app") || lower.includes("what can you do")) {
+    return APP_GUIDE;
+  }
   if (lower.includes("overwhelm") || lower.includes("too many") || lower.includes("busy")) {
     return context.todayTaskCount > 5
       ? `You've got ${context.todayTaskCount} tasks today. Pick the 3 with the nearest deadlines or highest priority and move the rest to tomorrow — a shorter honest list beats a long ignored one.`
