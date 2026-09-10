@@ -16,11 +16,14 @@ export type EditableGoal = {
   title: string;
   description: string | null;
   notes: string | null;
+  category: string | null;
   startDate: string;
   endDate: string;
   priority: Priority;
   status: GoalStatus;
 };
+
+const PRIORITY_LABEL: Record<Priority, string> = { LOW: "Low priority", MEDIUM: "Medium priority", HIGH: "High priority" };
 
 export function GoalHeader({ goal }: { goal: EditableGoal }) {
   const [editing, setEditing] = useState(false);
@@ -44,12 +47,17 @@ export function GoalHeader({ goal }: { goal: EditableGoal }) {
             className="w-full rounded-lg border border-border-strong bg-surface px-3.5 py-2.5 text-sm outline-none focus:border-accent"
           />
         </Field>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <Field label="Start date" htmlFor="startDate">
             <TextInput id="startDate" name="startDate" type="date" defaultValue={goal.startDate.slice(0, 10)} required />
           </Field>
-          <Field label="Target date" htmlFor="endDate">
+          <Field label="Deadline" htmlFor="endDate">
             <TextInput id="endDate" name="endDate" type="date" defaultValue={goal.endDate.slice(0, 10)} required />
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Category" htmlFor="category">
+            <TextInput id="category" name="category" defaultValue={goal.category ?? ""} maxLength={60} />
           </Field>
           <Field label="Priority" htmlFor="priority">
             <select
@@ -79,9 +87,15 @@ export function GoalHeader({ goal }: { goal: EditableGoal }) {
   return (
     <header className="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <p className="font-mono text-xs uppercase tracking-wider text-teal">
-          {format(new Date(goal.startDate), "MMM d")} – {format(new Date(goal.endDate), "MMM d, yyyy")}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-mono text-xs uppercase tracking-wider text-teal">
+            {format(new Date(goal.startDate), "MMM d")} – {format(new Date(goal.endDate), "MMM d, yyyy")}
+          </p>
+          {goal.category && (
+            <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[11px] font-medium text-ink-faint">{goal.category}</span>
+          )}
+          <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[11px] font-medium text-ink-faint">{PRIORITY_LABEL[goal.priority]}</span>
+        </div>
         <h1 className="mt-1 text-2xl font-semibold">{goal.title}</h1>
         {goal.description && <p className="mt-1.5 max-w-xl text-sm text-ink-soft">{goal.description}</p>}
         {goal.notes && <div className="mt-2"><ResourceLinkChips links={parseResourceLinks(goal.notes)} /></div>}

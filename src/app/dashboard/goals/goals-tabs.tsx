@@ -9,6 +9,7 @@ export type GoalCardData = {
   id: string;
   title: string;
   status: string;
+  category: string | null;
   endDate: Date;
   milestonesTotal: number;
   milestonesDone: number;
@@ -52,7 +53,11 @@ export function GoalsTabs({ goals }: { goals: GoalCardData[] }) {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {shown.map((g) => {
-            const pct = g.milestonesTotal ? Math.round((g.milestonesDone / g.milestonesTotal) * 100) : 0;
+            const pct = g.tasksTotal
+              ? Math.round((g.tasksDone / g.tasksTotal) * 100)
+              : g.milestonesTotal
+              ? Math.round((g.milestonesDone / g.milestonesTotal) * 100)
+              : 0;
             const daysLeft = daysRemaining(g.endDate);
             return (
               <Link
@@ -60,17 +65,22 @@ export function GoalsTabs({ goals }: { goals: GoalCardData[] }) {
                 href={`/dashboard/goals/${g.id}`}
                 className="glass-card flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 hover:border-border-strong"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <p className="font-display text-base font-semibold">{g.title}</p>
-                  {g.status !== "ACTIVE" && (
-                    <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[11px] font-medium text-ink-faint">{g.status}</span>
-                  )}
+                  <div className="flex flex-none items-center gap-1.5">
+                    {g.category && (
+                      <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[11px] font-medium text-ink-faint">{g.category}</span>
+                    )}
+                    {g.status !== "ACTIVE" && (
+                      <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[11px] font-medium text-ink-faint">{g.status}</span>
+                    )}
+                  </div>
                 </div>
                 <div className="h-2 rounded-full bg-surface-3">
                   <div className="h-2 rounded-full bg-accent" style={{ width: `${pct}%` }} />
                 </div>
                 <div className="flex justify-between text-xs text-ink-faint">
-                  <span>{pct}% milestones &middot; {g.tasksDone}/{g.tasksTotal} tasks</span>
+                  <span>{g.tasksDone}/{g.tasksTotal} tasks &middot; {pct}% complete</span>
                   <span>{g.status === "ACTIVE" ? `${daysLeft}d left` : ""}</span>
                 </div>
               </Link>

@@ -4,10 +4,41 @@ import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db/client";
 import { recalculateStreakOnCompletion } from "@/lib/streaks/engine";
+import { notifyUser } from "@/lib/notifications/service";
 import { createTaskSchema } from "@/lib/validation/tasks";
 import type { TaskStatus } from "@prisma/client";
 
 export type TaskFormState = { error?: string } | undefined;
+
+/**
+ * Keeps a goal's status in sync with its tasks: completing the last
+ * outstanding task on an ACTIVE goal marks the goal COMPLETED and sends a
+ * celebration notification; un-completing a task reopens it. Only touches
+ * ACTIVE/COMPLETED — never overrides an ARCHIVED goal.
+ */
+async function syncGoalCompletion(goalId: string, userId: string) {
+  const goal = await prisma.goal.findFirst({
+    where: { id: goalId, userId },
+    select: { id: true, title: true, status: true, tasks: { select: { status: true } } },
+  });
+  if (!goal || goal.status === "ARCHIVED") return;
+
+  const total = goal.tasks.length;
+  const done = goal.tasks.filter((t) => t.status === "COMPLETED").length;
+  const allDone = total > 0 && done === total;
+
+  if (allDone && goal.status !== "COMPLETED") {
+    await prisma.goal.update({ where: { id: goalId }, data: { status: "COMPLETED" } });
+    await notifyUser(userId, {
+      type: "SYSTEM",
+      title: "Goal completed! 🎉",
+      body: `"${goal.title}" — all ${total} task${total === 1 ? "" : "s"} done. Nice work.`,
+      actionUrl: `/dashboard/goals/${goalId}`,
+    });
+  } else if (!allDone && goal.status === "COMPLETED") {
+    await prisma.goal.update({ where: { id: goalId }, data: { status: "ACTIVE" } });
+  }
+}
 
 export async function createTask(_prev: TaskFormState, formData: FormData): Promise<TaskFormState> {
   const user = await requireUser();
@@ -22,6 +53,7 @@ export async function createTask(_prev: TaskFormState, formData: FormData): Prom
     estimatedMinutes: formData.get("estimatedMinutes") || undefined,
     notes: formData.get("notes") || undefined,
     goalId: formData.get("goalId") || undefined,
+    recurrenceDays: formData.getAll("recurrenceDays"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the form." };
 
@@ -37,6 +69,7 @@ export async function createTask(_prev: TaskFormState, formData: FormData): Prom
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/today");
   revalidatePath("/dashboard/calendar");
+  if (parsed.data.goalId) revalidatePath(`/dashboard/goals/${parsed.data.goalId}`);
 }
 
 export async function updateTask(taskId: string, _prev: TaskFormState, formData: FormData): Promise<TaskFormState> {
@@ -92,6 +125,10 @@ export async function setTaskStatus(taskId: string, status: TaskStatus) {
 
   if (status === "COMPLETED") {
     await recalculateStreakOnCompletion(user.id);
+  }
+
+  if (task.goalId) {
+    await syncGoalCompletion(task.goalId, user.id);
   }
 
   revalidatePath("/dashboard");

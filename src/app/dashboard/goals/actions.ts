@@ -138,6 +138,7 @@ export async function createManualGoal(_prev: ManualGoalState, formData: FormDat
   const parsed = manualGoalSchema.safeParse({
     title: formData.get("title"),
     description: formData.get("description") || undefined,
+    category: formData.get("category") || undefined,
     startDate: formData.get("startDate"),
     endDate: formData.get("endDate"),
     priority: formData.get("priority") || "MEDIUM",
@@ -172,6 +173,7 @@ export async function updateGoal(goalId: string, _prev: EditGoalState, formData:
     title: formData.get("title"),
     description: formData.get("description") || undefined,
     notes: formData.get("notes") || undefined,
+    category: formData.get("category") || undefined,
     startDate: formData.get("startDate"),
     endDate: formData.get("endDate"),
     priority: formData.get("priority") || "MEDIUM",
@@ -183,7 +185,7 @@ export async function updateGoal(goalId: string, _prev: EditGoalState, formData:
 
   const result = await prisma.goal.updateMany({
     where: { id: goalId, userId: user.id },
-    data: { ...data, description: data.description ?? null, notes: data.notes ?? null },
+    data: { ...data, description: data.description ?? null, notes: data.notes ?? null, category: data.category ?? null },
   });
   if (result.count === 0) return { error: "Couldn't find that goal." };
 

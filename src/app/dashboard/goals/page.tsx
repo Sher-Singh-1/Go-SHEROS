@@ -17,13 +17,21 @@ export default async function GoalsPage() {
       <PageHeader
         title="Goals"
         subtitle="Define your goals. Track your progress."
-        right={<ButtonLink href="/dashboard/goals/new">+ New goal</ButtonLink>}
+        right={
+          <div className="flex gap-2">
+            <ButtonLink href="/dashboard/goals/quick" variant="secondary">+ Quick goal</ButtonLink>
+            <ButtonLink href="/dashboard/goals/new">+ AI-planned goal</ButtonLink>
+          </div>
+        }
       />
 
       {goals.length === 0 ? (
         <div className="glass-card rounded-2xl border border-dashed border-border-strong p-10 text-center">
-          <p className="text-sm text-ink-soft">No goals yet — tell the AI what you&apos;re working toward.</p>
-          <ButtonLink href="/dashboard/goals/new" className="mt-4">Start a goal</ButtonLink>
+          <p className="text-sm text-ink-soft">No goals yet — name one and break it into your own tasks, or let the AI draft a plan.</p>
+          <div className="mt-4 flex justify-center gap-2">
+            <ButtonLink href="/dashboard/goals/quick" variant="secondary">+ Quick goal</ButtonLink>
+            <ButtonLink href="/dashboard/goals/new">+ AI-planned goal</ButtonLink>
+          </div>
         </div>
       ) : (
         <GoalsTabs
@@ -31,6 +39,7 @@ export default async function GoalsPage() {
             id: g.id,
             title: g.title,
             status: g.status,
+            category: g.category,
             endDate: g.endDate,
             milestonesTotal: g.milestones.length,
             milestonesDone: g.milestones.filter((m) => m.completedAt).length,

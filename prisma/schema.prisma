@@ -130,6 +130,7 @@ model Goal {
   title           String
   description     String?
   notes           String?
+  category        String?
   startDate       DateTime
   endDate         DateTime
   priority        Priority   @default(MEDIUM)
