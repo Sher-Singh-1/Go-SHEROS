@@ -53,5 +53,5 @@ export async function completeOnboarding(_prev: FormState, formData: FormData): 
     },
   });
 
-  redirect("/dashboard/goals/new?first=true");
+  redirect("/dashboard");
 }

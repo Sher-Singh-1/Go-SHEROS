@@ -2,11 +2,14 @@ import { addDays, differenceInCalendarDays, differenceInCalendarWeeks } from "da
 
 export type PlanInput = {
   goalTitle: string;
+  notes?: string;
   startDate: Date;
   endDate: Date;
   hoursPerDay: number;
   experienceLevel: "beginner" | "intermediate" | "advanced";
   preferredStartHour: number;
+  /** Days of week to schedule tasks on, 0=Sunday..6=Saturday (matches Date#getDay()). Empty/omitted means every day. */
+  daysOfWeek?: number[];
 };
 
 export type PlannedMilestone = {
@@ -48,7 +51,10 @@ export function decomposeGoal(input: PlanInput): PlanResult {
   const milestoneCount = Math.min(8, Math.max(3, Math.round(totalWeeks / 3) || 3));
   const milestones: PlannedMilestone[] = buildMilestones(input.goalTitle, input.startDate, totalDays, milestoneCount);
 
-  const daysToGenerate = Math.min(totalDays, 14); // "this week" plus a buffer week
+  const allowedWeekdays = new Set(
+    input.daysOfWeek && input.daysOfWeek.length > 0 ? input.daysOfWeek : [0, 1, 2, 3, 4, 5, 6]
+  );
+  const maxScheduledDays = Math.min(totalDays, 14); // "this week" plus a buffer week
   const tasksPerDay = input.experienceLevel === "beginner" ? 2 : input.experienceLevel === "advanced" ? 4 : 3;
   const minutesPerTask = Math.max(20, Math.round((input.hoursPerDay * 60) / tasksPerDay));
 
@@ -57,19 +63,21 @@ export function decomposeGoal(input: PlanInput): PlanResult {
       `${input.hoursPerDay}h/day is tight for ${tasksPerDay} tasks — consider fewer, longer sessions.`
     );
   }
-  if (totalWeeks > 0 && totalDays / totalWeeks < 7 * (input.hoursPerDay > 0 ? 1 : 0)) {
-    // placeholder guard kept intentionally simple for the deterministic fallback
-  }
 
   const tasks: PlannedTask[] = [];
-  const topics = buildTopicQueue(input.goalTitle, input.experienceLevel, daysToGenerate * tasksPerDay);
+  const topics = buildTopicQueue(input.goalTitle, input.notes, input.experienceLevel, maxScheduledDays * tasksPerDay);
   let topicCursor = 0;
+  let scheduledDays = 0;
+  let dayOffset = 0;
 
-  for (let day = 0; day < daysToGenerate; day++) {
-    const date = addDays(input.startDate, day);
+  while (scheduledDays < maxScheduledDays && dayOffset < totalDays) {
+    const date = addDays(input.startDate, dayOffset);
+    dayOffset++;
+    if (!allowedWeekdays.has(date.getDay())) continue;
+
     const milestoneIndex = Math.min(
       milestones.length - 1,
-      Math.floor((day / totalDays) * milestones.length)
+      Math.floor((dayOffset / totalDays) * milestones.length)
     );
 
     for (let t = 0; t < tasksPerDay; t++) {
@@ -84,11 +92,14 @@ export function decomposeGoal(input: PlanInput): PlanResult {
       });
       topicCursor++;
     }
+    scheduledDays++;
   }
 
-  if (totalDays > 14) {
+  if (tasks.length === 0) {
+    warnings.push("None of your selected days fall within this timeframe — try widening the date range or day selection.");
+  } else if (scheduledDays >= maxScheduledDays && dayOffset < totalDays) {
     warnings.push(
-      `Only the first ${daysToGenerate} days were scheduled — later weeks generate as you go, adjusted to your actual pace.`
+      `Only the first ${scheduledDays} scheduled days were planned — later weeks generate as you go, adjusted to your actual pace.`
     );
   }
 
@@ -117,16 +128,31 @@ function buildMilestones(goalTitle: string, startDate: Date, totalDays: number, 
   });
 }
 
-function buildTopicQueue(goalTitle: string, level: PlanInput["experienceLevel"], count: number): string[] {
+function buildTopicQueue(
+  goalTitle: string,
+  notes: string | undefined,
+  level: PlanInput["experienceLevel"],
+  count: number
+): string[] {
   const verbs =
     level === "beginner"
-      ? ["Learn the basics of", "Practice", "Review", "Take notes on"]
+      ? ["Learn the basics of", "Practice", "Review", "Take notes on", "Watch/read a primer on", "Try a small exercise on"]
       : level === "advanced"
-      ? ["Deep-dive into", "Build a project using", "Optimize", "Teach back / document"]
-      : ["Study", "Practice", "Apply", "Review"];
+      ? ["Deep-dive into", "Build a project using", "Optimize", "Teach back / document", "Benchmark", "Refactor a past attempt at"]
+      : ["Study", "Practice", "Apply", "Review", "Explore", "Work through examples of"];
+
+  // If the user gave specifics, split them into sub-topics so tasks rotate
+  // through what they actually want to focus on instead of repeating the
+  // goal title verbatim with a generic verb slapped on front.
+  const subtopics = (notes ?? "")
+    .split(/[,\n;]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const focusList = subtopics.length > 0 ? subtopics : [goalTitle];
 
   return Array.from({ length: Math.max(count, 8) }, (_, i) => {
     const verb = verbs[i % verbs.length];
-    return `${verb} ${goalTitle} — session ${i + 1}`;
+    const focus = focusList[Math.floor(i / verbs.length) % focusList.length];
+    return `${verb} ${focus}`;
   });
 }

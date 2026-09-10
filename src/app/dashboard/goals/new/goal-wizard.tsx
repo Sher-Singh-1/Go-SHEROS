@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { clsx } from "clsx";
 import { format } from "date-fns";
 import { generateDraftPlan, acceptDraftPlan, type PlanFormState, type SerializedPlan } from "../actions";
 import { Field, TextInput, FormError } from "@/components/ui/field";
@@ -8,15 +9,56 @@ import { Button } from "@/components/ui/button";
 
 const initialState: PlanFormState = { status: "idle" };
 
-export function GoalWizard({ isFirstGoal }: { isFirstGoal: boolean }) {
+const WEEKDAYS = [
+  { value: 0, label: "Sun" },
+  { value: 1, label: "Mon" },
+  { value: 2, label: "Tue" },
+  { value: 3, label: "Wed" },
+  { value: 4, label: "Thu" },
+  { value: 5, label: "Fri" },
+  { value: 6, label: "Sat" },
+];
+
+export function GoalWizard({
+  isFirstGoal,
+  defaultHoursPerDay,
+  defaultStartHour,
+}: {
+  isFirstGoal: boolean;
+  defaultHoursPerDay: number;
+  defaultStartHour: number;
+}) {
   // Remounting on "Start over" resets every hook below — including
   // useActionState — in one step, rather than tracking a separate reset flag.
   const [attempt, setAttempt] = useState(0);
-  return <GoalWizardAttempt key={attempt} isFirstGoal={isFirstGoal} onStartOver={() => setAttempt((n) => n + 1)} />;
+  return (
+    <GoalWizardAttempt
+      key={attempt}
+      isFirstGoal={isFirstGoal}
+      defaultHoursPerDay={defaultHoursPerDay}
+      defaultStartHour={defaultStartHour}
+      onStartOver={() => setAttempt((n) => n + 1)}
+    />
+  );
 }
 
-function GoalWizardAttempt({ isFirstGoal, onStartOver }: { isFirstGoal: boolean; onStartOver: () => void }) {
+function GoalWizardAttempt({
+  isFirstGoal,
+  defaultHoursPerDay,
+  defaultStartHour,
+  onStartOver,
+}: {
+  isFirstGoal: boolean;
+  defaultHoursPerDay: number;
+  defaultStartHour: number;
+  onStartOver: () => void;
+}) {
   const [state, formAction, pending] = useActionState(generateDraftPlan, initialState);
+  const [selectedDays, setSelectedDays] = useState<number[]>([0, 1, 2, 3, 4, 5, 6]);
+
+  function toggleDay(day: number) {
+    setSelectedDays((prev) => (prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort()));
+  }
 
   if (state.status === "drafted") {
     return (
@@ -35,14 +77,24 @@ function GoalWizardAttempt({ isFirstGoal, onStartOver }: { isFirstGoal: boolean;
       <div>
         <h1 className="text-xl font-semibold">{isFirstGoal ? "What do you want to achieve?" : "Start a new goal"}</h1>
         <p className="mt-1.5 text-sm text-ink-soft">
-          Give the AI a goal and a timeframe — it&apos;ll draft milestones and a first couple of weeks of tasks,
-          sized to your available hours.
+          Tell it what you&apos;re working toward, on your terms — topic, timeframe, which days, how much time.
+          It&apos;ll draft milestones and a first couple of weeks of tasks built around that, not a generic template.
         </p>
       </div>
 
       <form action={formAction} className="flex flex-col gap-4">
         <Field label="Goal" htmlFor="goalTitle">
-          <TextInput id="goalTitle" name="goalTitle" placeholder="Learn AWS Cloud" required autoFocus maxLength={120} />
+          <TextInput id="goalTitle" name="goalTitle" placeholder="Anything — learn AWS, train for a 10K, write a novel…" required autoFocus maxLength={120} />
+        </Field>
+        <Field label="Details (optional)" htmlFor="notes" hint="Specific topics, sub-skills, or constraints — the plan will rotate through these instead of repeating the goal title.">
+          <textarea
+            id="notes"
+            name="notes"
+            rows={3}
+            maxLength={2000}
+            placeholder="e.g. EC2, S3, IAM basics, then a small deployed project"
+            className="w-full rounded-lg border border-border-strong bg-surface px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint outline-none transition-colors focus:border-accent"
+          />
         </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Start date" htmlFor="startDate">
@@ -50,6 +102,55 @@ function GoalWizardAttempt({ isFirstGoal, onStartOver }: { isFirstGoal: boolean;
           </Field>
           <Field label="Target date" htmlFor="endDate">
             <TextInput id="endDate" name="endDate" type="date" required />
+          </Field>
+        </div>
+        <Field label="Which days do you want to work on this?" htmlFor="daysOfWeek">
+          <div id="daysOfWeek" className="flex flex-wrap gap-2">
+            {WEEKDAYS.map((d) => (
+              <label key={d.value} className="cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="daysOfWeek"
+                  value={d.value}
+                  checked={selectedDays.includes(d.value)}
+                  onChange={() => toggleDay(d.value)}
+                  className="peer sr-only"
+                />
+                <span
+                  className={clsx(
+                    "flex h-9 w-12 items-center justify-center rounded-lg border text-xs font-medium transition-colors",
+                    selectedDays.includes(d.value)
+                      ? "border-accent bg-accent-soft text-accent-ink"
+                      : "border-border-strong text-ink-soft hover:border-border"
+                  )}
+                >
+                  {d.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Hours per day for this" htmlFor="hoursPerDay">
+            <TextInput
+              id="hoursPerDay"
+              name="hoursPerDay"
+              type="number"
+              step="0.5"
+              min="0.5"
+              max="16"
+              defaultValue={defaultHoursPerDay}
+              required
+            />
+          </Field>
+          <Field label="Preferred start time" htmlFor="preferredStartTime">
+            <TextInput
+              id="preferredStartTime"
+              name="preferredStartTime"
+              type="time"
+              defaultValue={`${String(defaultStartHour).padStart(2, "0")}:00`}
+              required
+            />
           </Field>
         </div>
         <Field label="Experience level with this" htmlFor="experienceLevel">

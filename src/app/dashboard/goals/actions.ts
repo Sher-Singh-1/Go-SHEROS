@@ -26,13 +26,17 @@ export type PlanFormState =
     };
 
 export async function generateDraftPlan(_prev: PlanFormState, formData: FormData): Promise<PlanFormState> {
-  const user = await requireUser();
+  await requireUser();
 
   const parsed = draftGoalSchema.safeParse({
     goalTitle: formData.get("goalTitle"),
+    notes: formData.get("notes") || undefined,
     startDate: formData.get("startDate"),
     endDate: formData.get("endDate"),
     experienceLevel: formData.get("experienceLevel"),
+    hoursPerDay: formData.get("hoursPerDay"),
+    preferredStartTime: formData.get("preferredStartTime"),
+    daysOfWeek: formData.getAll("daysOfWeek"),
   });
   if (!parsed.success) return { status: "error", error: parsed.error.issues[0]?.message ?? "Check the form." };
   const data = parsed.data;
@@ -41,21 +45,17 @@ export async function generateDraftPlan(_prev: PlanFormState, formData: FormData
     return { status: "error", error: "End date needs to be after the start date." };
   }
 
-  const prefs = await prisma.userPreferences.upsert({
-    where: { userId: user.id },
-    create: { userId: user.id },
-    update: {},
-  });
-
   const rawPlan = await generatePlanDraft({
     goalTitle: data.goalTitle,
+    notes: data.notes,
     startDate: data.startDate,
     endDate: data.endDate,
-    hoursPerDay: prefs.hoursPerDay,
+    hoursPerDay: data.hoursPerDay,
     experienceLevel: data.experienceLevel,
-    preferredStartHour: prefs.preferredStartHour,
+    preferredStartHour: data.preferredStartTime,
+    daysOfWeek: data.daysOfWeek,
   });
-  const plan = validatePlanAgainstCapacity(rawPlan, prefs.hoursPerDay);
+  const plan = validatePlanAgainstCapacity(rawPlan, data.hoursPerDay);
 
   return {
     status: "drafted",
