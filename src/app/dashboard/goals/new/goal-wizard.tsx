@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Link from "next/link";
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import { generateDraftPlan, acceptDraftPlan, type PlanFormState, type SerializedPlan } from "../actions";
@@ -80,6 +81,12 @@ function GoalWizardAttempt({
         <p className="mt-1.5 text-sm text-ink-soft">
           Tell it what you&apos;re working toward, on your terms — topic, timeframe, which days, how much time.
           It&apos;ll draft milestones and a first couple of weeks of tasks built around that, not a generic template.
+        </p>
+        <p className="mt-2 text-xs text-ink-faint">
+          Best for skill-building goals (learn a language, get certified, train for a race). For a goal that isn&apos;t
+          about learning something — job hunting, a move, a purchase — use{" "}
+          <Link href="/dashboard/goals/quick" className="font-medium text-teal hover:underline">+ Quick goal</Link>{" "}
+          instead and write your own tasks, no Learn/Practice filler.
         </p>
       </div>
 
