@@ -1,12 +1,47 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { startOfDay, endOfDay, format } from "date-fns";
 import { requireUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db/client";
 import { recalculateStreakOnCompletion } from "@/lib/streaks/engine";
 import { notifyUser } from "@/lib/notifications/service";
 import { createTaskSchema } from "@/lib/validation/tasks";
 import type { TaskStatus } from "@prisma/client";
+
+const ALL_DONE_TITLE = "All tasks completed! 🎉";
+
+/**
+ * When completing a task leaves every task on that same day COMPLETED,
+ * sends a one-time congrats notification for that day (deduped by checking
+ * for a prior notification whose actionUrl points at that day).
+ */
+async function notifyIfDayFullyCompleted(userId: string, date: Date) {
+  const dayStart = startOfDay(date);
+  const dayEnd = endOfDay(date);
+  const dayKey = format(date, "yyyy-MM-dd");
+
+  const tasksForDay = await prisma.task.findMany({
+    where: { userId, date: { gte: dayStart, lte: dayEnd } },
+    select: { status: true },
+  });
+  const allDone = tasksForDay.length > 0 && tasksForDay.every((t) => t.status === "COMPLETED");
+  if (!allDone) return;
+
+  const actionUrl = `/dashboard/today?date=${dayKey}`;
+  const alreadyNotified = await prisma.notification.findFirst({
+    where: { userId, title: ALL_DONE_TITLE, actionUrl },
+    select: { id: true },
+  });
+  if (alreadyNotified) return;
+
+  await notifyUser(userId, {
+    type: "TASK",
+    title: ALL_DONE_TITLE,
+    body: `You finished all ${tasksForDay.length} task${tasksForDay.length === 1 ? "" : "s"} for ${dayKey}. Congrats!`,
+    actionUrl,
+  });
+}
 
 export type TaskFormState = { error?: string } | undefined;
 
@@ -125,6 +160,7 @@ export async function setTaskStatus(taskId: string, status: TaskStatus) {
 
   if (status === "COMPLETED") {
     await recalculateStreakOnCompletion(user.id);
+    await notifyIfDayFullyCompleted(user.id, task.date);
   }
 
   if (task.goalId) {

@@ -65,5 +65,36 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, rulesChecked: rules.length, notified });
+  // Daily digest: every user with unfinished tasks today gets a single
+  // reminder, regardless of whether they've set up a TASK_DUE reminder rule.
+  const PENDING_DIGEST_TITLE = "Pending tasks today";
+  const allUsers = await prisma.user.findMany({ select: { id: true } });
+  let pendingDigestsSent = 0;
+
+  for (const u of allUsers) {
+    const alreadySent = await prisma.notification.findFirst({
+      where: { userId: u.id, title: PENDING_DIGEST_TITLE, createdAt: { gte: today } },
+      select: { id: true },
+    });
+    if (alreadySent) continue;
+
+    const pendingCount = await prisma.task.count({
+      where: {
+        userId: u.id,
+        date: { gte: today, lte: endOfDay(now) },
+        status: { in: ["NOT_STARTED", "IN_PROGRESS"] },
+      },
+    });
+    if (pendingCount === 0) continue;
+
+    await notifyUser(u.id, {
+      type: "TASK",
+      title: PENDING_DIGEST_TITLE,
+      body: `You have ${pendingCount} task${pendingCount === 1 ? "" : "s"} left to finish today.`,
+      actionUrl: "/dashboard/today",
+    });
+    pendingDigestsSent += 1;
+  }
+
+  return NextResponse.json({ ok: true, rulesChecked: rules.length, notified, pendingDigestsSent });
 }

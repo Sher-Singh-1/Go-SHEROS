@@ -197,5 +197,8 @@ export async function updateGoal(goalId: string, _prev: EditGoalState, formData:
 export async function deleteGoal(goalId: string) {
   const user = await requireUser();
   await prisma.goal.deleteMany({ where: { id: goalId, userId: user.id } });
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/today");
+  revalidatePath("/dashboard/calendar");
   redirect("/dashboard/goals");
 }

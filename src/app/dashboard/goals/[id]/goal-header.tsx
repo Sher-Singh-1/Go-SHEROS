@@ -123,7 +123,7 @@ export function GoalHeader({ goal }: { goal: EditableGoal }) {
         )}
         <button
           onClick={() => {
-            if (window.confirm(`Delete "${goal.title}" permanently? Its tasks will stay on your list, unlinked from any goal.`)) {
+            if (window.confirm(`Delete "${goal.title}" permanently? This also deletes all of its tasks.`)) {
               startTransition(() => deleteGoal(goal.id));
             }
           }}
